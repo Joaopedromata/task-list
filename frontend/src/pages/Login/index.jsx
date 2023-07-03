@@ -16,7 +16,7 @@ function Login() {
     setErrorMessage("");
 
     axios
-      .post("http://localhost:3333/login", {
+      .post(import.meta.env.VITE_API_URL + "/login", {
         email: emailInput,
         password: passwordInput,
       })

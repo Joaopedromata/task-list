@@ -26,7 +26,7 @@ function Tasks() {
 
     if (filter === "all") {
       axios
-        .get("http://localhost:3333/tasks", {
+        .get(import.meta.env.VITE_API_URL + "/tasks", {
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -39,7 +39,7 @@ function Tasks() {
     }
     if (filter === "pending") {
       axios
-        .get("http://localhost:3333/tasks/pending")
+        .get(import.meta.env.VITE_API_URL + "/tasks/pending")
         .then(
           (response) => {
             setTasks(response.data);
@@ -56,7 +56,7 @@ function Tasks() {
 
     if (filter === "completed") {
       axios
-        .get("http://localhost:3333/tasks/completed", {
+        .get(import.meta.env.VITE_API_URL + "/tasks/completed", {
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -78,7 +78,7 @@ function Tasks() {
 
     axios
       .post(
-        "http://localhost:3333/tasks",
+        import.meta.env.VITE_API_URL + "/tasks",
         { name: inputValue },
         {
           headers: {
@@ -102,7 +102,7 @@ function Tasks() {
 
   function deleteTask(id) {
     axios
-      .delete("http://localhost:3333/tasks/" + id, {
+      .delete(import.meta.env.VITE_API_URL + "/tasks/" + id, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -117,7 +117,7 @@ function Tasks() {
   function completeTask(id) {
     axios
       .patch(
-        "http://localhost:3333/tasks/" + id + "/completed",
+        import.meta.env.VITE_API_URL + "/tasks/" + id + "/completed",
         {},
         {
           headers: {
