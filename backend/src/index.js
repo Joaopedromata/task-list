@@ -70,6 +70,42 @@ app.post(
   }
 );
 
+app.post(
+  "/create-user",
+
+  async function (request, response) {
+    const body = request.body;
+
+    const name = body.name;
+    const password = body.password;
+    const email = body.email;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (user) {
+      return response.status(409).send({
+        message: "This user already exists",
+      });
+    }
+
+    const newUser = await prisma.user.create({
+      data: {
+        name: name,
+        password: password,
+        email: email,
+      },
+    });
+
+    delete newUser.password;
+
+    response.status(201).send(newUser);
+  }
+);
+
 app.get(
   "/tasks",
   {
