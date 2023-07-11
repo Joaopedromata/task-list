@@ -129,16 +129,17 @@ function Tasks() {
           },
         }
       )
-      .then((response) => {
-        const newTasks = tasks.map((task) => {
-          if (task.id === id) {
-            return response.data;
-          }
-
-          return task;
-        });
-
-        setTasks(newTasks);
+      .then(() => {
+        axios
+          .get(import.meta.env.VITE_API_URL + "/tasks", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            setTasks(response.data);
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => console.log(error));
   }

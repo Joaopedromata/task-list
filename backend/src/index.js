@@ -116,6 +116,9 @@ app.get(
       where: {
         user_id: request.user.id,
       },
+      orderBy: {
+        completed: "asc",
+      },
     });
 
     response.send(tasks);
