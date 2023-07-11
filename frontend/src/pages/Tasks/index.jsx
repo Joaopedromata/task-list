@@ -39,7 +39,11 @@ function Tasks() {
     }
     if (filter === "pending") {
       axios
-        .get(import.meta.env.VITE_API_URL + "/tasks/pending")
+        .get(import.meta.env.VITE_API_URL + "/tasks/pending", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
         .then(
           (response) => {
             setTasks(response.data);
