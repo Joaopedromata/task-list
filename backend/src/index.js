@@ -113,12 +113,14 @@ app.get(
   },
   async function (request, response) {
     const tasks = await prisma.task.findMany({
-      where: {
-        user_id: request.user.id,
-      },
-      orderBy: {
-        completed: "asc",
-      },
+      orderBy: [
+        {
+          completed: "asc",
+        },
+        {
+          id: "asc",
+        },
+      ],
     });
 
     response.send(tasks);
@@ -136,6 +138,9 @@ app.get(
         completed: false,
         user_id: request.user.id,
       },
+      orderBy: {
+        id: "asc",
+      },
     });
 
     response.send(tasks);
@@ -152,6 +157,9 @@ app.get(
       where: {
         completed: true,
         user_id: request.user.id,
+      },
+      orderBy: {
+        id: "asc",
       },
     });
 
@@ -219,6 +227,49 @@ app.patch(
     });
 
     response.status(202).send(updatedTask);
+  }
+);
+
+app.get(
+  "/boards",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const boards = await prisma.board.findMany({
+      where: {
+        BoardUser: {
+          some: {
+            user_id: request.user.id,
+          },
+        },
+      },
+      include: {
+        BoardUser: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    const transformedPayload = boards.map((board) => {
+      const users = board.BoardUser.map((boardUser) => {
+        return {
+          id: boardUser.user.id,
+          email: boardUser.user.email,
+          name: boardUser.user.name,
+        };
+      });
+
+      return {
+        id: board.id,
+        name: board.name,
+        users,
+      };
+    });
+
+    response.send(transformedPayload);
   }
 );
 

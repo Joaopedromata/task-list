@@ -14,9 +14,6 @@ model Task {
   id        Int     @id @default(autoincrement())
   name      String
   completed Boolean @default(false)
-  user_id   Int
-
-  user User @relation(fields: [user_id], references: [id])
 
   @@map("tasks")
 }
@@ -27,7 +24,28 @@ model User {
   name     String
   password String
 
-  tasks Task[]
+  BoardUser BoardUser[]
 
   @@map("users")
+}
+
+model Board {
+  id        Int         @id @default(autoincrement())
+  name      String
+  BoardUser BoardUser[]
+
+  @@map("boards")
+}
+
+model BoardUser {
+  id Int @id @default(autoincrement())
+
+  board_id Int
+  user_id  Int
+
+  user  User  @relation(fields: [user_id], references: [id])
+  board Board @relation(fields: [board_id], references: [id])
+
+  @@unique([user_id, board_id])
+  @@map("users_boards")
 }

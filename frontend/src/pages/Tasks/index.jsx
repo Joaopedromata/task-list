@@ -90,8 +90,18 @@ function Tasks() {
           },
         }
       )
-      .then((response) => {
-        setTasks([...tasks, response.data]);
+      .then(() => {
+        axios
+          .get(import.meta.env.VITE_API_URL + "/tasks", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            setTasks(response.data);
+          })
+          .catch((error) => console.log(error));
+        return;
       })
       .catch((error) => {
         console.log(error);
