@@ -107,12 +107,17 @@ app.post(
 );
 
 app.get(
-  "/tasks",
+  "/boards/:id/tasks",
   {
     preHandler: authenticateToken,
   },
   async function (request, response) {
+    const id = request.params.id;
+
     const tasks = await prisma.task.findMany({
+      where: {
+        board_id: parseInt(id),
+      },
       orderBy: [
         {
           completed: "asc",
@@ -128,15 +133,17 @@ app.get(
 );
 
 app.get(
-  "/tasks/pending",
+  "/boards/:id/tasks/pending",
   {
     preHandler: authenticateToken,
   },
   async function (request, response) {
+    const id = request.params.id;
+
     const tasks = await prisma.task.findMany({
       where: {
         completed: false,
-        user_id: request.user.id,
+        board_id: parseInt(id),
       },
       orderBy: {
         id: "asc",
@@ -148,15 +155,16 @@ app.get(
 );
 
 app.get(
-  "/tasks/completed",
+  "/boards/:id/tasks/completed",
   {
     preHandler: authenticateToken,
   },
   async function (request, response) {
+    const id = request.params.id;
     const tasks = await prisma.task.findMany({
       where: {
         completed: true,
-        user_id: request.user.id,
+        board_id: parseInt(id),
       },
       orderBy: {
         id: "asc",
@@ -176,15 +184,43 @@ app.post(
     const body = request.body;
 
     const name = body.name;
+    const board_id = body.board_id;
 
     const newTask = await prisma.task.create({
       data: {
         name: name,
-        user_id: request.user.id,
+        board_id: parseInt(board_id),
       },
     });
 
     response.status(201).send(newTask);
+  }
+);
+
+app.post(
+  "/boards",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const body = request.body;
+
+    const name = body.name;
+
+    const newBoard = await prisma.board.create({
+      data: {
+        name: name,
+      },
+    });
+
+    await prisma.boardUser.create({
+      data: {
+        board_id: newBoard.id,
+        user_id: request.user.id,
+      },
+    });
+
+    response.status(201).send(newBoard);
   }
 );
 
