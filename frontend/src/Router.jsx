@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Tasks from "./pages/Tasks";
 import CreateUser from "./pages/CreateUser";
@@ -12,7 +12,7 @@ function Router() {
         <Route path="boards/:id/tasks" element={<Tasks />} />
         <Route path="create-user" element={<CreateUser />} />
         <Route path="boards" element={<Boards />} />
-        <Route path="*" element={<Boards />} />
+        <Route path="*" element={<Navigate to="boards" />} />
       </Routes>
     </BrowserRouter>
   );
