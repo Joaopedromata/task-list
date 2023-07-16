@@ -69,11 +69,18 @@ function Boards() {
     setInputValue("");
   }
 
+  function handleLogout() {
+    localStorage.removeItem("token");
+    navigate("/");
+  }
+
   return (
     <>
       <div className="header">
         <div className="title">Boards</div>
-        <div className="logout">Logout</div>
+        <div className="logout" onClick={handleLogout}>
+          Logout
+        </div>
       </div>
       <div className="container">
         <form className="form" onSubmit={(event) => handleSubmit(event)}>
