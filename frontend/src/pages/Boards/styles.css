@@ -1,0 +1,75 @@
+.container {
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.header {
+  width: calc(100% - 24px);
+  padding: 0 12px;
+  background: #28a745;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 20px;
+  color: white;
+  font-weight: 500;
+}
+
+.logout {
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: 300ms all;
+}
+
+.logout:hover {
+  transform: scale(1.1);
+}
+
+.board-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.board-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.board-list li .board-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.board-list li .board-name {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+.board-list li .board-users {
+  display: flex;
+  gap: 10px;
+}
+
+.board-list li .board-users span {
+  height: 32px;
+  width: 32px;
+  background: #e4e4e4;
+  border-radius: 50%;
+}

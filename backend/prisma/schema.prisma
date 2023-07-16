@@ -14,6 +14,9 @@ model Task {
   id        Int     @id @default(autoincrement())
   name      String
   completed Boolean @default(false)
+  board_id  Int     @default(1)
+
+  board Board @relation(fields: [board_id], references: [id])
 
   @@map("tasks")
 }
@@ -33,6 +36,7 @@ model Board {
   id        Int         @id @default(autoincrement())
   name      String
   BoardUser BoardUser[]
+  Task      Task[]
 
   @@map("boards")
 }
