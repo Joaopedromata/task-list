@@ -67,9 +67,15 @@
   gap: 10px;
 }
 
-.board-list li .board-users span {
+.board-list li .board-users a {
   height: 32px;
   width: 32px;
   background: #e4e4e4;
   border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 1;
 }

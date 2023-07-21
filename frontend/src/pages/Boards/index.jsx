@@ -74,6 +74,20 @@ function Boards() {
     navigate("/");
   }
 
+  function getInitialCharacterFromName(name) {
+    const words = name.trim().split(/\s+/);
+
+    if (words.length >= 2) {
+      const firstNameFirstCharacter = words[0].charAt(0);
+      const secondNameFirstCharacter = words[1].charAt(0);
+
+      return (firstNameFirstCharacter + secondNameFirstCharacter).toUpperCase();
+    } else {
+      const firstNameFirstCharacter = words[0].charAt(0);
+      return firstNameFirstCharacter;
+    }
+  }
+
   return (
     <>
       <div className="header">
@@ -101,7 +115,9 @@ function Boards() {
                 <span>{board.name}</span>
                 <div className="board-users">
                   {board.users.map((user) => (
-                    <span key={user.id}></span>
+                    <a key={user.id} title={user.name}>
+                      {getInitialCharacterFromName(user.name)}
+                    </a>
                   ))}
                 </div>
               </div>
