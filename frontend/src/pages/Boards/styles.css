@@ -47,7 +47,6 @@
   padding: 10px;
   background-color: #f8f9fa;
   border-radius: 4px;
-  cursor: pointer;
 }
 
 .board-list li .board-info {
@@ -55,6 +54,11 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+}
+
+.board-list li .board-info span {
+  cursor: pointer;
+  flex: 1;
 }
 
 .board-list li .board-name {
@@ -77,5 +81,21 @@
   align-items: center;
   justify-content: center;
 
-  z-index: 1;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.board-list li form {
+  width: 100%;
+  display: flex;
+}
+
+.board-list li input {
+  flex-grow: 1;
+  margin-right: 10px;
+  padding: 5px;
+}
+
+.board {
+  margin: 0;
 }

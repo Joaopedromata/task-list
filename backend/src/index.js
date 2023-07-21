@@ -383,6 +383,42 @@ app.get(
   }
 );
 
+app.post(
+  "/boards/:id/user",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const body = request.body;
+    const id = request.params.id;
+
+    const email = body.email;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: id,
+      },
+    });
+
+    const newBoardUser = await prisma.boardUser.create({
+      data: {
+        user_id: user.id,
+        board_id: board.id,
+      },
+    });
+
+    response.status(201).send({
+      id: newBoardUser.uuid,
+    });
+  }
+);
+
 app
   .listen({ port: 3333 })
   .then(() => console.log("HTTP server is running"))

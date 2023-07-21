@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import "./styles.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import plus from "../../assets/plus.svg";
 
 function Boards() {
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [boards, setBoards] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [userManager, setUserManager] = useState({
+    isOpen: false,
+    id: "",
+  });
+
+  const [newUserInputValue, setNewUserInputValue] = useState("");
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -88,6 +95,41 @@ function Boards() {
     }
   }
 
+  function handleAddUser(e, id) {
+    e.preventDefault();
+
+    axios
+      .post(
+        import.meta.env.VITE_API_URL + "/boards/" + id + "/user",
+        { email: newUserInputValue },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then(() => {
+        setUserManager({
+          id: "",
+          isOpen: false,
+        });
+
+        axios
+          .get(import.meta.env.VITE_API_URL + "/boards", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            setBoards(response.data);
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   return (
     <>
       <div className="header">
@@ -107,21 +149,47 @@ function Boards() {
         </form>
         <ul className="board-list">
           {boards.map((board) => (
-            <li
-              key={board.id}
-              onClick={() => navigate(`/boards/${board.id}/tasks`)}
-            >
-              <div className="board-info">
-                <span>{board.name}</span>
-                <div className="board-users">
-                  {board.users.map((user) => (
-                    <a key={user.id} title={user.name}>
-                      {getInitialCharacterFromName(user.name)}
+            <Fragment key={board.id}>
+              <li>
+                <div className="board-info">
+                  <span onClick={() => navigate(`/boards/${board.id}/tasks`)}>
+                    {board.name}
+                  </span>
+                  <div className="board-users">
+                    {board.users.map((user) => (
+                      <a key={user.id} title={user.name}>
+                        {getInitialCharacterFromName(user.name)}
+                      </a>
+                    ))}
+                    <a
+                      onClick={() =>
+                        setUserManager({
+                          isOpen: true,
+                          id: board.id,
+                        })
+                      }
+                    >
+                      <img src={plus} />
                     </a>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            </li>
+              </li>
+              {userManager.isOpen && userManager.id === board.id && (
+                <li>
+                  <form
+                    className="form board"
+                    onSubmit={(e) => handleAddUser(e, board.id)}
+                  >
+                    <input
+                      name="digite o email do convidado"
+                      type="email"
+                      onChange={(e) => setNewUserInputValue(e.target.value)}
+                    />
+                    <button>Adicionar</button>
+                  </form>
+                </li>
+              )}
+            </Fragment>
           ))}
         </ul>
       </div>
