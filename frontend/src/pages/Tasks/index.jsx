@@ -175,6 +175,9 @@ function Tasks() {
         </h3>
       </header>
       <div className="container">
+        <button className="back-button" onClick={() => navigate("/boards")}>
+          Voltar
+        </button>
         <form className="form" onSubmit={(event) => addTask(event)}>
           <input
             placeholder="Nova Tarefa"

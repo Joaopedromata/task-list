@@ -4,6 +4,20 @@
   padding: 20px;
 }
 
+.back-button {
+  background: #28a745;
+  color: #ffffff;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 300ms;
+  border: none;
+  margin-bottom: 20px;
+}
+.back-button:hover {
+  background: #218838;
+  color: #fff;
+}
+
 .form {
   display: flex;
   margin-bottom: 20px;
@@ -46,9 +60,13 @@
   background: #f8f9fa;
 }
 
-.filters .selected,
-.filters .selected:hover {
+.filters .selected button {
   background: #28a745;
+  color: #fff;
+}
+
+.filters .selected:hover {
+  background: #218838;
   color: #fff;
 }
 
