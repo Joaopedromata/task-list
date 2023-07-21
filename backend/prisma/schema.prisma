@@ -14,7 +14,8 @@ model Task {
   id        Int     @id @default(autoincrement())
   name      String
   completed Boolean @default(false)
-  board_id  Int     @default(1)
+  board_id  Int
+  uuid      String  @unique @default(uuid())
 
   board Board @relation(fields: [board_id], references: [id])
 
@@ -26,6 +27,7 @@ model User {
   email    String @unique
   name     String
   password String
+  uuid     String @unique @default(uuid())
 
   BoardUser BoardUser[]
 
@@ -33,8 +35,10 @@ model User {
 }
 
 model Board {
-  id        Int         @id @default(autoincrement())
-  name      String
+  id   Int    @id @default(autoincrement())
+  name String
+  uuid String @unique @default(uuid())
+
   BoardUser BoardUser[]
   Task      Task[]
 
@@ -42,7 +46,8 @@ model Board {
 }
 
 model BoardUser {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
 
   board_id Int
   user_id  Int

@@ -102,7 +102,11 @@ app.post(
 
     delete newUser.password;
 
-    response.status(201).send(newUser);
+    response.status(201).send({
+      id: newUser.uuid,
+      email: newUser.email,
+      name: newUser.name,
+    });
   }
 );
 
@@ -114,9 +118,20 @@ app.get(
   async function (request, response) {
     const id = request.params.id;
 
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: id,
+      },
+    });
+
     const tasks = await prisma.task.findMany({
       where: {
-        board_id: parseInt(id),
+        board_id: board.id,
+      },
+      select: {
+        uuid: true,
+        name: true,
+        completed: true,
       },
       orderBy: [
         {
@@ -128,7 +143,13 @@ app.get(
       ],
     });
 
-    response.send(tasks);
+    const transformedPayload = tasks.map((task) => ({
+      name: task.name,
+      completed: task.completed,
+      id: task.uuid,
+    }));
+
+    response.send(transformedPayload);
   }
 );
 
@@ -140,17 +161,29 @@ app.get(
   async function (request, response) {
     const id = request.params.id;
 
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: id,
+      },
+    });
+
     const tasks = await prisma.task.findMany({
       where: {
         completed: false,
-        board_id: parseInt(id),
+        board_id: board.id,
       },
       orderBy: {
         id: "asc",
       },
     });
 
-    response.send(tasks);
+    const transformedPayload = tasks.map((task) => ({
+      name: task.name,
+      completed: task.completed,
+      id: task.uuid,
+    }));
+
+    response.send(transformedPayload);
   }
 );
 
@@ -161,17 +194,35 @@ app.get(
   },
   async function (request, response) {
     const id = request.params.id;
+
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: id,
+      },
+    });
+
     const tasks = await prisma.task.findMany({
       where: {
         completed: true,
-        board_id: parseInt(id),
+        board_id: board.id,
+      },
+      select: {
+        uuid: true,
+        name: true,
+        completed: true,
       },
       orderBy: {
         id: "asc",
       },
     });
 
-    response.send(tasks);
+    const transformedPayload = tasks.map((task) => ({
+      id: task.uuid,
+      name: task.name,
+      completed: task.completed,
+    }));
+
+    response.send(transformedPayload);
   }
 );
 
@@ -186,14 +237,29 @@ app.post(
     const name = body.name;
     const board_id = body.board_id;
 
-    const newTask = await prisma.task.create({
-      data: {
-        name: name,
-        board_id: parseInt(board_id),
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: board_id,
       },
     });
 
-    response.status(201).send(newTask);
+    const newTask = await prisma.task.create({
+      data: {
+        name: name,
+        board_id: board.id,
+      },
+      select: {
+        uuid: true,
+        completed: true,
+        name: true,
+      },
+    });
+
+    response.status(201).send({
+      id: newTask.uuid,
+      name: newTask.name,
+      completed: newTask.completed,
+    });
   }
 );
 
@@ -232,9 +298,9 @@ app.delete(
   async function (request, response) {
     const params = request.params;
 
-    const id = parseInt(params.id);
+    const id = params.id;
 
-    await prisma.task.delete({ where: { id: id } });
+    await prisma.task.delete({ where: { uuid: id } });
 
     return response.status(204).send();
   }
@@ -247,22 +313,30 @@ app.patch(
   },
   async function (request, response) {
     const params = request.params;
-    const id = parseInt(params.id);
+    const id = params.id;
 
     const task = await prisma.task.findUnique({
-      where: { id: id },
+      where: { uuid: id },
     });
 
     const isCompleted = task.completed;
 
     const updatedTask = await prisma.task.update({
-      where: { id: id },
+      where: { uuid: id },
       data: {
         completed: !isCompleted,
       },
+      include: {
+        board: true,
+      },
     });
 
-    response.status(202).send(updatedTask);
+    response.status(202).send({
+      name: updatedTask.name,
+      completed: updatedTask.completed,
+      id: updatedTask.uuid,
+      board_id: updatedTask.board.uuid,
+    });
   }
 );
 
@@ -292,14 +366,14 @@ app.get(
     const transformedPayload = boards.map((board) => {
       const users = board.BoardUser.map((boardUser) => {
         return {
-          id: boardUser.user.id,
+          id: boardUser.user.uuid,
           email: boardUser.user.email,
           name: boardUser.user.name,
         };
       });
 
       return {
-        id: board.id,
+        id: board.uuid,
         name: board.name,
         users,
       };
