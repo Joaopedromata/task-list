@@ -17,7 +17,7 @@ model Task {
   board_id  Int
   uuid      String  @unique @default(uuid())
 
-  board Board @relation(fields: [board_id], references: [id])
+  board Board @relation(fields: [board_id], references: [id], onDelete: Cascade)
 
   @@map("tasks")
 }
@@ -52,8 +52,8 @@ model BoardUser {
   board_id Int
   user_id  Int
 
-  user  User  @relation(fields: [user_id], references: [id])
-  board Board @relation(fields: [board_id], references: [id])
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  board Board @relation(fields: [board_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, board_id])
   @@map("users_boards")

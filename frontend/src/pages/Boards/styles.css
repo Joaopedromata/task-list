@@ -4,35 +4,6 @@
   padding: 20px;
 }
 
-.header {
-  width: calc(100% - 24px);
-  padding: 0 12px;
-  background: #28a745;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.title {
-  font-size: 20px;
-  color: white;
-  font-weight: 500;
-}
-
-.logout {
-  color: white;
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: 300ms all;
-}
-
-.logout:hover {
-  transform: scale(1.1);
-}
-
 .board-list {
   list-style: none;
   padding: 0;
@@ -83,6 +54,10 @@
 
   z-index: 10;
   cursor: pointer;
+}
+
+.board-list li .board-users {
+  margin-right: 10px;
 }
 
 .board-list li form {

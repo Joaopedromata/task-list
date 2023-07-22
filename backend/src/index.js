@@ -422,6 +422,24 @@ app.post(
   }
 );
 
+app.delete(
+  "/boards/:id",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const id = request.params.id;
+
+    await prisma.board.delete({
+      where: {
+        uuid: id,
+      },
+    });
+
+    response.status(204).send();
+  }
+);
+
 app
   .listen({ port: 3333 })
   .then(() => console.log("HTTP server is running"))

@@ -122,6 +122,28 @@ function Boards() {
       });
   }
 
+  function deleteBoard(id) {
+    axios
+      .delete(import.meta.env.VITE_API_URL + "/boards/" + id, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      .then(() => {
+        axios
+          .get(import.meta.env.VITE_API_URL + "/boards", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            setBoards(response.data);
+          })
+          .catch((error) => console.log(error));
+      })
+      .catch((error) => console.log(error));
+  }
+
   return (
     <>
       <Header title="Quadros" />
@@ -159,6 +181,9 @@ function Boards() {
                       <img src={plus} />
                     </a>
                   </div>
+                  <Button variant="error" onClick={() => deleteBoard(board.id)}>
+                    Excluir
+                  </Button>
                 </div>
               </li>
               {userManager.isOpen && userManager.id === board.id && (
