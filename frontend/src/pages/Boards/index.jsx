@@ -172,7 +172,7 @@ function Boards() {
                       type="email"
                       onChange={(e) => setNewUserInputValue(e.target.value)}
                     />
-                    <button>Adicionar</button>
+                    <Button>Adicionar</Button>
                   </form>
                 </li>
               )}

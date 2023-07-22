@@ -2,11 +2,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./styles.css";
 import { Link, useNavigate } from "react-router-dom";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
 
 function Login() {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -19,6 +22,7 @@ function Login() {
   }, []);
 
   function handleSubmit(e) {
+    setIsLoading(true);
     e.preventDefault();
 
     setErrorMessage("");
@@ -32,8 +36,12 @@ function Login() {
         localStorage.setItem("token", response.data.token);
 
         navigate("/tasks");
+        setIsLoading(false);
       })
-      .catch((error) => setErrorMessage(error.response.data.message));
+      .catch((error) => {
+        setIsLoading(false);
+        setErrorMessage(error.response.data.message);
+      });
   }
 
   return (
@@ -42,7 +50,7 @@ function Login() {
         <h4>Faça seu login</h4>
         <label>
           Email
-          <input
+          <Input
             type="email"
             placeholder="Digite seu e-mail"
             onChange={(e) => setEmailInput(e.target.value)}
@@ -51,7 +59,7 @@ function Login() {
         </label>
         <label>
           Senha
-          <input
+          <Input
             type="password"
             placeholder="Digite sua senha"
             onChange={(e) => setPasswordInput(e.target.value)}
@@ -61,7 +69,7 @@ function Login() {
         <Link className="create-user" to="/create-user">
           Criar conta
         </Link>
-        <button>Entrar</button>
+        <Button>{isLoading ? "Aguarde..." : "Entrar"}</Button>
       </form>
     </div>
   );

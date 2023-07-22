@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
 import "./styles.css";
 
 function CreateUser() {
@@ -9,13 +11,16 @@ function CreateUser() {
   const [passwordInput, setPasswordInput] = useState("");
   const [password2Input, setPassword2Input] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   function handleSubmit(e) {
+    setIsLoading(true);
     e.preventDefault();
 
     if (passwordInput !== password2Input) {
+      setIsLoading(false);
       return setErrorMessage("The passwords don't match");
     }
 
@@ -28,9 +33,13 @@ function CreateUser() {
         password: passwordInput,
       })
       .then(() => {
+        setIsLoading(false);
         navigate("/");
       })
-      .catch((error) => setErrorMessage(error.response.data.message));
+      .catch((error) => {
+        setIsLoading(false);
+        setErrorMessage(error.response.data.message);
+      });
   }
 
   return (
@@ -39,7 +48,7 @@ function CreateUser() {
         <h4>Crie sua conta</h4>
         <label>
           Email
-          <input
+          <Input
             type="email"
             placeholder="Digite seu e-mail"
             onChange={(e) => setEmailInput(e.target.value)}
@@ -48,7 +57,7 @@ function CreateUser() {
         </label>
         <label>
           Nome
-          <input
+          <Input
             placeholder="Digite seu nome"
             onChange={(e) => setNameInput(e.target.value)}
           />
@@ -56,7 +65,7 @@ function CreateUser() {
         </label>
         <label>
           Senha
-          <input
+          <Input
             type="password"
             placeholder="Digite sua senha"
             onChange={(e) => setPasswordInput(e.target.value)}
@@ -65,7 +74,7 @@ function CreateUser() {
         </label>
         <label>
           Repita sua senha
-          <input
+          <Input
             type="password"
             placeholder="Digite sua senha novamente"
             onChange={(e) => setPassword2Input(e.target.value)}
@@ -75,7 +84,7 @@ function CreateUser() {
         <Link className="login" to="/">
           Voltar ao login
         </Link>
-        <button>Entrar</button>
+        <Button>{isLoading ? "Aguarde..." : "Entrar"}</Button>
       </form>
     </div>
   );
