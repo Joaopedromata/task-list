@@ -1,0 +1,31 @@
+.button {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  transition: all 300ms;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #218838;
+}
+
+.button-secondary {
+  background: #fff;
+  border: 1px solid #28a745;
+  color: #28a745;
+}
+.button-secondary:hover {
+  background: #f8f9fa;
+}
+
+.button-error {
+  background: #dc3545;
+  border: none;
+  color: #fff;
+}
+
+.button-error:hover {
+  background: #c82333;
+}

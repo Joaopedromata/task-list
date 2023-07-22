@@ -361,6 +361,9 @@ app.get(
           },
         },
       },
+      orderBy: {
+        id: "asc",
+      },
     });
 
     const transformedPayload = boards.map((board) => {

@@ -2,6 +2,9 @@ import "./styles.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import Header from "../../components/Header";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -161,51 +164,39 @@ function Tasks() {
       .catch((error) => console.log(error));
   }
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    navigate("/");
-  }
-
   return (
     <>
-      <header className="header">
-        <h1 className="title">Lista de Tarefas</h1>
-        <h3 className="logout" onClick={handleLogout}>
-          logout
-        </h3>
-      </header>
+      <Header title="Tarefas" />
       <div className="container">
-        <button className="back-button" onClick={() => navigate("/boards")}>
-          Voltar
-        </button>
+        <Button onClick={() => navigate("/boards")}>Voltar</Button>
         <form className="form" onSubmit={(event) => addTask(event)}>
-          <input
+          <Input
             placeholder="Nova Tarefa"
             onChange={(event) => handleChange(event)}
             value={inputValue}
           />
-          <button>Nova Tarefa</button>
+          <Button>Nova Tarefa</Button>
         </form>
 
         <div className="filters">
-          <button
-            className={filter === "all" ? "selected" : ""}
+          <Button
+            variant={filter !== "all" && "secondary"}
             onClick={() => setFilter("all")}
           >
             Todas
-          </button>
-          <button
-            className={filter === "pending" ? "selected" : ""}
+          </Button>
+          <Button
+            variant={filter !== "pending" && "secondary"}
             onClick={() => setFilter("pending")}
           >
             Pendentes
-          </button>
-          <button
-            className={filter === "completed" ? "selected" : ""}
+          </Button>
+          <Button
+            variant={filter !== "completed" && "secondary"}
             onClick={() => setFilter("completed")}
           >
             Completas
-          </button>
+          </Button>
         </div>
 
         <ul className="task-list">
@@ -217,7 +208,9 @@ function Tasks() {
                 onChange={() => completeTask(task.id)}
               />
               <span>{task.name}</span>
-              <button onClick={() => deleteTask(task.id)}>Deletar</button>
+              <Button variant="error" onClick={() => deleteTask(task.id)}>
+                Deletar
+              </Button>
             </li>
           ))}
         </ul>

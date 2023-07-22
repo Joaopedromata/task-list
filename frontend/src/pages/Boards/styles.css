@@ -90,12 +90,6 @@
   display: flex;
 }
 
-.board-list li input {
-  flex-grow: 1;
-  margin-right: 10px;
-  padding: 5px;
-}
-
 .board {
   margin: 0;
 }

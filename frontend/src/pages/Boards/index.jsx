@@ -3,10 +3,13 @@ import "./styles.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import plus from "../../assets/plus.svg";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import Header from "../../components/Header";
+import { useAuth } from "../../hooks/useAuth";
 
 function Boards() {
   const navigate = useNavigate();
-  const [token, setToken] = useState("");
   const [boards, setBoards] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [userManager, setUserManager] = useState({
@@ -14,15 +17,9 @@ function Boards() {
     id: "",
   });
 
-  const [newUserInputValue, setNewUserInputValue] = useState("");
+  const token = useAuth();
 
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      setToken(localStorage.getItem("token"));
-    } else {
-      navigate("/");
-    }
-  }, []);
+  const [newUserInputValue, setNewUserInputValue] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -76,11 +73,6 @@ function Boards() {
     setInputValue("");
   }
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    navigate("/");
-  }
-
   function getInitialCharacterFromName(name) {
     const words = name.trim().split(/\s+/);
 
@@ -132,20 +124,15 @@ function Boards() {
 
   return (
     <>
-      <div className="header">
-        <div className="title">Boards</div>
-        <div className="logout" onClick={handleLogout}>
-          Logout
-        </div>
-      </div>
+      <Header title="Quadros" />
       <div className="container">
         <form className="form" onSubmit={(event) => handleSubmit(event)}>
-          <input
+          <Input
             placeholder="Novo Quadro"
             onChange={(event) => setInputValue(event.target.value)}
             value={inputValue}
           />
-          <button>Novo Quadro</button>
+          <Button>Novo Quadro</Button>
         </form>
         <ul className="board-list">
           {boards.map((board) => (
@@ -180,7 +167,7 @@ function Boards() {
                     className="form board"
                     onSubmit={(e) => handleAddUser(e, board.id)}
                   >
-                    <input
+                    <Input
                       name="digite o email do convidado"
                       type="email"
                       onChange={(e) => setNewUserInputValue(e.target.value)}
