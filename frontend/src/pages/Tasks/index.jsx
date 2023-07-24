@@ -180,19 +180,19 @@ function Tasks() {
 
         <div className="filters">
           <Button
-            variant={filter !== "all" && "secondary"}
+            variant={filter !== "all" ? "secondary" : ""}
             onClick={() => setFilter("all")}
           >
             Todas
           </Button>
           <Button
-            variant={filter !== "pending" && "secondary"}
+            variant={filter !== "pending" ? "secondary" : ""}
             onClick={() => setFilter("pending")}
           >
             Pendentes
           </Button>
           <Button
-            variant={filter !== "completed" && "secondary"}
+            variant={filter !== "completed" ? "secondary" : ""}
             onClick={() => setFilter("completed")}
           >
             Completas

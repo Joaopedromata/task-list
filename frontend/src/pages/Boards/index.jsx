@@ -3,6 +3,7 @@ import "./styles.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import plus from "../../assets/plus.svg";
+import minus from "../../assets/minus.svg";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
@@ -10,16 +11,20 @@ import { useAuth } from "../../hooks/useAuth";
 
 function Boards() {
   const navigate = useNavigate();
+  const token = useAuth();
+
+  const [newUserInputValue, setNewUserInputValue] = useState("");
   const [boards, setBoards] = useState([]);
   const [inputValue, setInputValue] = useState("");
+  const [editInputValue, setEditInputValue] = useState({
+    isOpen: false,
+    id: "",
+    value: "",
+  });
   const [userManager, setUserManager] = useState({
     isOpen: false,
     id: "",
   });
-
-  const token = useAuth();
-
-  const [newUserInputValue, setNewUserInputValue] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -82,9 +87,43 @@ function Boards() {
 
       return (firstNameFirstCharacter + secondNameFirstCharacter).toUpperCase();
     } else {
-      const firstNameFirstCharacter = words[0].charAt(0);
+      const firstNameFirstCharacter = words[0].charAt(0).toUpperCase();
       return firstNameFirstCharacter;
     }
+  }
+
+  function handleEdit(id) {
+    axios
+      .patch(
+        import.meta.env.VITE_API_URL + "/boards/" + id,
+        { name: editInputValue.value },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then(() => {
+        axios
+          .get(import.meta.env.VITE_API_URL + "/boards", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          })
+          .then((response) => {
+            setBoards(response.data);
+            setEditInputValue({
+              id: "",
+              isOpen: false,
+              value: "",
+            });
+          })
+          .catch((error) => console.log(error));
+        return;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function handleAddUser(e, id) {
@@ -161,9 +200,24 @@ function Boards() {
             <Fragment key={board.id}>
               <li>
                 <div className="board-info">
-                  <span onClick={() => navigate(`/boards/${board.id}/tasks`)}>
-                    {board.name}
-                  </span>
+                  {editInputValue.isOpen && editInputValue.id === board.id ? (
+                    <input
+                      className="board-info__input"
+                      value={editInputValue.value}
+                      autoFocus
+                      onChange={(e) =>
+                        setEditInputValue({
+                          ...editInputValue,
+                          value: e.target.value,
+                        })
+                      }
+                      onBlur={() => handleEdit(board.id)}
+                    />
+                  ) : (
+                    <span onClick={() => navigate(`/boards/${board.id}/tasks`)}>
+                      {board.name}
+                    </span>
+                  )}
                   <div className="board-users">
                     {board.users.map((user) => (
                       <a key={user.id} title={user.name}>
@@ -173,17 +227,44 @@ function Boards() {
                     <a
                       onClick={() =>
                         setUserManager({
-                          isOpen: true,
+                          isOpen: !userManager.isOpen,
                           id: board.id,
                         })
                       }
                     >
-                      <img src={plus} />
+                      <img
+                        src={
+                          userManager.isOpen && board.id === userManager.id
+                            ? minus
+                            : plus
+                        }
+                      />
                     </a>
                   </div>
-                  <Button variant="error" onClick={() => deleteBoard(board.id)}>
-                    Excluir
-                  </Button>
+                  <div className="board-info__buttons">
+                    <Button
+                      variant={
+                        editInputValue.isOpen && editInputValue.id === board.id
+                          ? ""
+                          : "secondary"
+                      }
+                      onClick={() =>
+                        setEditInputValue({
+                          id: board.id,
+                          isOpen: !editInputValue.isOpen,
+                          value: board.name,
+                        })
+                      }
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="error"
+                      onClick={() => deleteBoard(board.id)}
+                    >
+                      Excluir
+                    </Button>
+                  </div>
                 </div>
               </li>
               {userManager.isOpen && userManager.id === board.id && (
@@ -193,7 +274,7 @@ function Boards() {
                     onSubmit={(e) => handleAddUser(e, board.id)}
                   >
                     <Input
-                      name="digite o email do convidado"
+                      placeholder="Digite o email do convidado"
                       type="email"
                       onChange={(e) => setNewUserInputValue(e.target.value)}
                     />

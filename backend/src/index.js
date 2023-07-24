@@ -440,6 +440,30 @@ app.delete(
   }
 );
 
+app.patch(
+  "/boards/:id",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const params = request.params;
+    const id = params.id;
+    const body = request.body;
+
+    const updatedBoard = await prisma.board.update({
+      where: { uuid: id },
+      data: {
+        name: body.name,
+      },
+    });
+
+    response.status(202).send({
+      name: updatedBoard.name,
+      id: updatedBoard.uuid,
+    });
+  }
+);
+
 app
   .listen({ port: 3333 })
   .then(() => console.log("HTTP server is running"))

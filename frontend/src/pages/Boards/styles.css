@@ -39,7 +39,7 @@
 
 .board-list li .board-users {
   display: flex;
-  gap: 10px;
+  gap: 5px;
 }
 
 .board-list li .board-users a {
@@ -67,4 +67,21 @@
 
 .board {
   margin: 0;
+}
+
+.board-info__buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.board-info__input {
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  margin-right: 10px;
+  background: transparent;
+}
+
+.board-info__input:focus {
+  outline: none;
 }

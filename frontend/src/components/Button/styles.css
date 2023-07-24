@@ -14,6 +14,7 @@
 .button-secondary {
   background: #fff;
   border: 1px solid #28a745;
+  padding: 4px 9px;
   color: #28a745;
 }
 .button-secondary:hover {
