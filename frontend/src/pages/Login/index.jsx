@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import "./styles.css";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
+import api from "../../services/api";
 
 function Login() {
   const [emailInput, setEmailInput] = useState("");
@@ -27,14 +27,13 @@ function Login() {
 
     setErrorMessage("");
 
-    axios
-      .post(import.meta.env.VITE_API_URL + "/login", {
+    api
+      .post("/login", {
         email: emailInput,
         password: passwordInput,
       })
       .then((response) => {
         localStorage.setItem("token", response.data.token);
-
         navigate("/tasks");
         setIsLoading(false);
       })

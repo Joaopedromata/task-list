@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import "./styles.css";
+import api from "../../services/api";
 
 function CreateUser() {
   const [emailInput, setEmailInput] = useState("");
@@ -26,8 +26,8 @@ function CreateUser() {
 
     setErrorMessage("");
 
-    axios
-      .post(import.meta.env.VITE_API_URL + "/create-user", {
+    api
+      .post("/create-user", {
         email: emailInput,
         name: nameInput,
         password: passwordInput,

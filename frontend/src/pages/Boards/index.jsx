@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
 import "./styles.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import plus from "../../assets/plus.svg";
 import minus from "../../assets/minus.svg";
@@ -8,6 +7,7 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import { useAuth } from "../../hooks/useAuth";
+import api from "../../services/api";
 
 function Boards() {
   const navigate = useNavigate();
@@ -29,12 +29,8 @@ function Boards() {
   useEffect(() => {
     if (!token) return;
 
-    axios
-      .get(import.meta.env.VITE_API_URL + "/boards", {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
+    api
+      .get("/boards")
       .then((response) => {
         setBoards(response.data);
       })
@@ -48,19 +44,11 @@ function Boards() {
       return;
     }
 
-    axios
-      .post(
-        import.meta.env.VITE_API_URL + "/boards",
-        { name: inputValue },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+    api
+      .post("/boards", { name: inputValue })
       .then(() => {
-        axios
-          .get(import.meta.env.VITE_API_URL + "/boards", {
+        api
+          .get("/boards", {
             headers: {
               Authorization: "Bearer " + token,
             },
@@ -93,23 +81,11 @@ function Boards() {
   }
 
   function handleEdit(id) {
-    axios
-      .patch(
-        import.meta.env.VITE_API_URL + "/boards/" + id,
-        { name: editInputValue.value },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+    api
+      .patch("/boards/" + id, { name: editInputValue.value })
       .then(() => {
-        axios
-          .get(import.meta.env.VITE_API_URL + "/boards", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
+        api
+          .get("/boards")
           .then((response) => {
             setBoards(response.data);
             setEditInputValue({
@@ -129,28 +105,16 @@ function Boards() {
   function handleAddUser(e, id) {
     e.preventDefault();
 
-    axios
-      .post(
-        import.meta.env.VITE_API_URL + "/boards/" + id + "/user",
-        { email: newUserInputValue },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+    api
+      .post("/boards/" + id + "/user", { email: newUserInputValue })
       .then(() => {
         setUserManager({
           id: "",
           isOpen: false,
         });
 
-        axios
-          .get(import.meta.env.VITE_API_URL + "/boards", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
+        api
+          .get("/boards")
           .then((response) => {
             setBoards(response.data);
           })
@@ -162,15 +126,11 @@ function Boards() {
   }
 
   function deleteBoard(id) {
-    axios
-      .delete(import.meta.env.VITE_API_URL + "/boards/" + id, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
+    api
+      .delete("/boards/" + id)
       .then(() => {
-        axios
-          .get(import.meta.env.VITE_API_URL + "/boards", {
+        api
+          .get("/boards", {
             headers: {
               Authorization: "Bearer " + token,
             },

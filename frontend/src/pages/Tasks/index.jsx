@@ -1,9 +1,9 @@
 import "./styles.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
+import api from "../../services/api";
 import Header from "../../components/Header";
 
 function Tasks() {
@@ -29,12 +29,8 @@ function Tasks() {
     }
 
     if (filter === "all") {
-      axios
-        .get(import.meta.env.VITE_API_URL + "/boards/" + id + "/tasks", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+      api
+        .get("/boards/" + id + "/tasks")
         .then((response) => {
           setTasks(response.data);
         })
@@ -42,15 +38,8 @@ function Tasks() {
       return;
     }
     if (filter === "pending") {
-      axios
-        .get(
-          import.meta.env.VITE_API_URL + "/boards/" + id + "/tasks/pending",
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
+      api
+        .get("/boards/" + id + "/tasks/pending")
         .then(
           (response) => {
             setTasks(response.data);
@@ -66,15 +55,8 @@ function Tasks() {
     }
 
     if (filter === "completed") {
-      axios
-        .get(
-          import.meta.env.VITE_API_URL + "/boards/" + id + "/tasks/completed",
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
+      api
+        .get("/boards/" + id + "/tasks/completed")
         .then((response) => {
           setTasks(response.data);
         })
@@ -90,23 +72,11 @@ function Tasks() {
       return;
     }
 
-    axios
-      .post(
-        import.meta.env.VITE_API_URL + "/tasks",
-        { name: inputValue, board_id: id },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+    api
+      .post("/tasks", { name: inputValue, board_id: id })
       .then(() => {
-        axios
-          .get(import.meta.env.VITE_API_URL + "/boards/" + id + "/tasks", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
+        api
+          .get("/boards/" + id + "/tasks")
           .then((response) => {
             setTasks(response.data);
           })
@@ -125,12 +95,8 @@ function Tasks() {
   }
 
   function deleteTask(id) {
-    axios
-      .delete(import.meta.env.VITE_API_URL + "/tasks/" + id, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
+    api
+      .delete("/tasks/" + id)
       .then(() => {
         const filteredTasks = tasks.filter((task) => task.id !== id);
         setTasks(filteredTasks);
@@ -139,23 +105,11 @@ function Tasks() {
   }
 
   function completeTask(taskId) {
-    axios
-      .patch(
-        import.meta.env.VITE_API_URL + "/tasks/" + taskId + "/completed",
-        {},
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+    api
+      .patch("/tasks/" + taskId + "/completed", {})
       .then(() => {
-        axios
-          .get(import.meta.env.VITE_API_URL + "/boards/" + id + "/tasks", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          })
+        api
+          .get("/boards/" + id + "/tasks")
           .then((response) => {
             setTasks(response.data);
           })
