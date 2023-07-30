@@ -5,12 +5,11 @@
 }
 
 .board-list {
-  list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.board-list li {
+.board-list .board-list__items {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,29 +19,29 @@
   border-radius: 4px;
 }
 
-.board-list li .board-info {
+.board-list .board-list__items .board-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
 }
 
-.board-list li .board-info span {
+.board-list .board-list__items .board-info span {
   cursor: pointer;
   flex: 1;
 }
 
-.board-list li .board-name {
+.board-list .board-list__items .board-name {
   margin-left: 10px;
   font-size: 18px;
 }
 
-.board-list li .board-users {
+.board-list .board-list__items .board-users {
   display: flex;
   gap: 5px;
 }
 
-.board-list li .board-users a {
+.board-list .board-list__items .board-users a {
   height: 32px;
   width: 32px;
   background: #e4e4e4;
@@ -56,17 +55,18 @@
   cursor: pointer;
 }
 
-.board-list li .board-users {
+.board-list .board-list__items .board-users {
   margin-right: 10px;
 }
 
-.board-list li form {
+.board-list .board-list__items form {
   width: 100%;
   display: flex;
 }
 
 .board {
   margin: 0;
+  align-items: flex-start;
 }
 
 .board-info__buttons {

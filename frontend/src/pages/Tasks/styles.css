@@ -17,10 +17,6 @@
   gap: 10px;
 }
 
-.task-list {
-  list-style: none;
-}
-
 .task-list li {
   display: flex;
   align-items: center;

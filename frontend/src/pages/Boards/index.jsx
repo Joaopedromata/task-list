@@ -8,6 +8,7 @@ import Button from "../../components/Button";
 import Header from "../../components/Header";
 import { useAuth } from "../../hooks/useAuth";
 import api from "../../services/api";
+import AutocompleteInput from "../../components/AutoCompleteInput";
 
 function Boards() {
   const navigate = useNavigate();
@@ -106,7 +107,7 @@ function Boards() {
     e.preventDefault();
 
     api
-      .post("/boards/" + id + "/user", { email: newUserInputValue })
+      .post("/boards/" + id + "/users/" + newUserInputValue)
       .then(() => {
         setUserManager({
           id: "",
@@ -143,6 +144,29 @@ function Boards() {
       .catch((error) => console.log(error));
   }
 
+  async function getAutocompleteOptions(searchTerm) {
+    return await api
+      .get("/users", {
+        params: {
+          email: searchTerm,
+        },
+      })
+      .then((response) => {
+        console.log(
+          response.data.map((user) => ({
+            value: user.id,
+            item: user.email,
+          }))
+        );
+
+        return response.data.map((user) => ({
+          value: user.id,
+          item: user.email,
+        }));
+      })
+      .catch((error) => console.log(error));
+  }
+
   return (
     <>
       <Header title="Quadros" />
@@ -158,7 +182,7 @@ function Boards() {
         <ul className="board-list">
           {boards.map((board) => (
             <Fragment key={board.id}>
-              <li>
+              <li className="board-list__items">
                 <div className="board-info">
                   {editInputValue.isOpen && editInputValue.id === board.id ? (
                     <input
@@ -228,15 +252,14 @@ function Boards() {
                 </div>
               </li>
               {userManager.isOpen && userManager.id === board.id && (
-                <li>
+                <li className="board-list__items">
                   <form
                     className="form board"
                     onSubmit={(e) => handleAddUser(e, board.id)}
                   >
-                    <Input
-                      placeholder="Digite o email do convidado"
-                      type="email"
-                      onChange={(e) => setNewUserInputValue(e.target.value)}
+                    <AutocompleteInput
+                      onChange={(_, id) => setNewUserInputValue(id)}
+                      getAutocompleteOptions={getAutocompleteOptions}
                     />
                     <Button>Adicionar</Button>
                   </form>

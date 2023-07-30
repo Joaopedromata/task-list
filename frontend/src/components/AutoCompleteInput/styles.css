@@ -1,0 +1,24 @@
+.auto-complete-input {
+  width: 100%;
+  display: flex;
+
+  flex-direction: column;
+}
+
+.auto-complete-input__options {
+  border: 1px solid rgb(133, 133, 133);
+  border-top: none;
+  background: white;
+  border-radius: 0px 0px 2px 2px;
+}
+
+.auto-complete-input__options___items {
+  padding: 6px;
+  border-bottom: 1px solid rgb(133, 133, 133);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.auto-complete-input__options___items:last-child {
+  border: none;
+}

@@ -111,6 +111,31 @@ app.post(
 );
 
 app.get(
+  "/users",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const emailFilter = request.query.email;
+
+    const users = await prisma.user.findMany({
+      where: {
+        email: {
+          startsWith: emailFilter,
+        },
+      },
+    });
+
+    const transformedPayload = users.map((user) => ({
+      id: user.uuid,
+      email: user.email,
+    }));
+
+    response.send(transformedPayload);
+  }
+);
+
+app.get(
   "/boards/:id/tasks",
   {
     preHandler: authenticateToken,
@@ -387,25 +412,23 @@ app.get(
 );
 
 app.post(
-  "/boards/:id/user",
+  "/boards/:board_id/users/:user_id",
   {
     preHandler: authenticateToken,
   },
   async function (request, response) {
-    const body = request.body;
-    const id = request.params.id;
-
-    const email = body.email;
+    const boardId = request.params.board_id;
+    const userId = request.params.user_id;
 
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
+        uuid: userId,
       },
     });
 
     const board = await prisma.board.findUnique({
       where: {
-        uuid: id,
+        uuid: boardId,
       },
     });
 
