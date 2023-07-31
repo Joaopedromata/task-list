@@ -161,7 +161,15 @@ function Tasks() {
 
   function joinTaskBoard(taskId, boardId) {
     api
-      .post(`/boards/${boardId}/tasks/${taskId}`)
+      .post(
+        `/boards/${boardId}/tasks/${taskId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then(() => {
         setFloatingMenu({
           id: "",
