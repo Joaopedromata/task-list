@@ -26,7 +26,6 @@ const authenticateToken = (request, response, next) => {
       });
     }
 
-    // Você pode adicionar o objeto 'user' ao request para uso posterior
     request.user = user;
 
     next();
@@ -149,29 +148,31 @@ app.get(
       },
     });
 
-    const tasks = await prisma.task.findMany({
+    const boardTasks = await prisma.boardTask.findMany({
       where: {
         board_id: board.id,
       },
-      select: {
-        uuid: true,
-        name: true,
-        completed: true,
+      include: {
+        task: true,
       },
       orderBy: [
         {
-          completed: "asc",
+          task: {
+            completed: "asc",
+          },
         },
         {
-          id: "asc",
+          task: {
+            id: "asc",
+          },
         },
       ],
     });
 
-    const transformedPayload = tasks.map((task) => ({
-      name: task.name,
-      completed: task.completed,
-      id: task.uuid,
+    const transformedPayload = boardTasks.map((boardTask) => ({
+      name: boardTask.task.name,
+      completed: boardTask.task.completed,
+      id: boardTask.task.uuid,
     }));
 
     response.send(transformedPayload);
@@ -192,20 +193,27 @@ app.get(
       },
     });
 
-    const tasks = await prisma.task.findMany({
+    const boardTasks = await prisma.boardTask.findMany({
       where: {
-        completed: false,
         board_id: board.id,
+        task: {
+          completed: false,
+        },
+      },
+      include: {
+        task: true,
       },
       orderBy: {
-        id: "asc",
+        task: {
+          id: "asc",
+        },
       },
     });
 
-    const transformedPayload = tasks.map((task) => ({
-      name: task.name,
-      completed: task.completed,
-      id: task.uuid,
+    const transformedPayload = boardTasks.map((boardTask) => ({
+      name: boardTask.task.name,
+      completed: boardTask.task.completed,
+      id: boardTask.task.uuid,
     }));
 
     response.send(transformedPayload);
@@ -226,25 +234,27 @@ app.get(
       },
     });
 
-    const tasks = await prisma.task.findMany({
+    const boardTasks = await prisma.boardTask.findMany({
       where: {
-        completed: true,
         board_id: board.id,
+        task: {
+          completed: true,
+        },
       },
-      select: {
-        uuid: true,
-        name: true,
-        completed: true,
+      include: {
+        task: true,
       },
       orderBy: {
-        id: "asc",
+        task: {
+          id: "asc",
+        },
       },
     });
 
-    const transformedPayload = tasks.map((task) => ({
-      id: task.uuid,
-      name: task.name,
-      completed: task.completed,
+    const transformedPayload = boardTasks.map((boardTask) => ({
+      name: boardTask.task.name,
+      completed: boardTask.task.completed,
+      id: boardTask.task.uuid,
     }));
 
     response.send(transformedPayload);
@@ -273,10 +283,12 @@ app.post(
         name: name,
         board_id: board.id,
       },
-      select: {
-        uuid: true,
-        completed: true,
-        name: true,
+    });
+
+    await prisma.boardTask.create({
+      data: {
+        task_id: newTask.id,
+        board_id: board.id,
       },
     });
 
@@ -483,6 +495,52 @@ app.patch(
     response.status(202).send({
       name: updatedBoard.name,
       id: updatedBoard.uuid,
+    });
+  }
+);
+
+app.post(
+  "/boards/:board_id/tasks/:task_id",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const boardId = request.params.board_id;
+    const taskId = request.params.task_id;
+
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: boardId,
+      },
+    });
+
+    const boardUser = await prisma.boardUser.findFirst({
+      where: {
+        user_id: request.user.id,
+        board_id: board.id,
+      },
+    });
+
+    if (!boardUser)
+      return response.status(400).send({
+        message: "Method not allowed for this user",
+      });
+
+    const task = await prisma.task.findUnique({
+      where: {
+        uuid: taskId,
+      },
+    });
+
+    const newBoardTask = await prisma.boardTask.create({
+      data: {
+        task_id: task.id,
+        board_id: board.id,
+      },
+    });
+
+    response.status(201).send({
+      id: newBoardTask.uuid,
     });
   }
 );
