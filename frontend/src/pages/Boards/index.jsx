@@ -107,7 +107,15 @@ function Boards() {
     e.preventDefault();
 
     api
-      .post("/boards/" + id + "/users/" + newUserInputValue)
+      .post(
+        "/boards/" + id + "/users/" + newUserInputValue,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then(() => {
         setUserManager({
           id: "",
