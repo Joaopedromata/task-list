@@ -26,6 +26,7 @@ const authenticateToken = (request, response, next) => {
       });
     }
 
+    // Você pode adicionar o objeto 'user' ao request para uso posterior
     request.user = user;
 
     next();
@@ -101,36 +102,7 @@ app.post(
 
     delete newUser.password;
 
-    response.status(201).send({
-      id: newUser.uuid,
-      email: newUser.email,
-      name: newUser.name,
-    });
-  }
-);
-
-app.get(
-  "/users",
-  {
-    preHandler: authenticateToken,
-  },
-  async function (request, response) {
-    const emailFilter = request.query.email;
-
-    const users = await prisma.user.findMany({
-      where: {
-        email: {
-          startsWith: emailFilter,
-        },
-      },
-    });
-
-    const transformedPayload = users.map((user) => ({
-      id: user.uuid,
-      email: user.email,
-    }));
-
-    response.send(transformedPayload);
+    response.status(201).send(newUser);
   }
 );
 
@@ -140,42 +112,33 @@ app.get(
     preHandler: authenticateToken,
   },
   async function (request, response) {
-    const id = request.params.id;
+    try {
+      const id = request.params.id;
 
-    const board = await prisma.board.findUnique({
-      where: {
-        uuid: id,
-      },
-    });
+      const board = await prisma.board.findUnique({
+        where: {
+          uuid: id,
+        },
+      });
 
-    const boardTasks = await prisma.boardTask.findMany({
-      where: {
-        board_id: board.id,
-      },
-      include: {
-        task: true,
-      },
-      orderBy: [
-        {
-          task: {
+      const tasks = await prisma.task.findMany({
+        where: {
+          board_id: parseInt(board.id),
+        },
+        orderBy: [
+          {
             completed: "asc",
           },
-        },
-        {
-          task: {
+          {
             id: "asc",
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    const transformedPayload = boardTasks.map((boardTask) => ({
-      name: boardTask.task.name,
-      completed: boardTask.task.completed,
-      id: boardTask.task.uuid,
-    }));
-
-    response.send(transformedPayload);
+      response.send(tasks);
+    } catch (error) {
+      console.log({ error });
+    }
   }
 );
 
@@ -187,36 +150,17 @@ app.get(
   async function (request, response) {
     const id = request.params.id;
 
-    const board = await prisma.board.findUnique({
+    const tasks = await prisma.task.findMany({
       where: {
-        uuid: id,
-      },
-    });
-
-    const boardTasks = await prisma.boardTask.findMany({
-      where: {
-        board_id: board.id,
-        task: {
-          completed: false,
-        },
-      },
-      include: {
-        task: true,
+        completed: false,
+        board_id: parseInt(id),
       },
       orderBy: {
-        task: {
-          id: "asc",
-        },
+        id: "asc",
       },
     });
 
-    const transformedPayload = boardTasks.map((boardTask) => ({
-      name: boardTask.task.name,
-      completed: boardTask.task.completed,
-      id: boardTask.task.uuid,
-    }));
-
-    response.send(transformedPayload);
+    response.send(tasks);
   }
 );
 
@@ -227,37 +171,17 @@ app.get(
   },
   async function (request, response) {
     const id = request.params.id;
-
-    const board = await prisma.board.findUnique({
+    const tasks = await prisma.task.findMany({
       where: {
-        uuid: id,
-      },
-    });
-
-    const boardTasks = await prisma.boardTask.findMany({
-      where: {
-        board_id: board.id,
-        task: {
-          completed: true,
-        },
-      },
-      include: {
-        task: true,
+        completed: true,
+        board_id: parseInt(id),
       },
       orderBy: {
-        task: {
-          id: "asc",
-        },
+        id: "asc",
       },
     });
 
-    const transformedPayload = boardTasks.map((boardTask) => ({
-      name: boardTask.task.name,
-      completed: boardTask.task.completed,
-      id: boardTask.task.uuid,
-    }));
-
-    response.send(transformedPayload);
+    response.send(tasks);
   }
 );
 
@@ -272,31 +196,14 @@ app.post(
     const name = body.name;
     const board_id = body.board_id;
 
-    const board = await prisma.board.findUnique({
-      where: {
-        uuid: board_id,
-      },
-    });
-
     const newTask = await prisma.task.create({
       data: {
         name: name,
-        board_id: board.id,
+        board_id: parseInt(board_id),
       },
     });
 
-    await prisma.boardTask.create({
-      data: {
-        task_id: newTask.id,
-        board_id: board.id,
-      },
-    });
-
-    response.status(201).send({
-      id: newTask.uuid,
-      name: newTask.name,
-      completed: newTask.completed,
-    });
+    response.status(201).send(newTask);
   }
 );
 
@@ -335,9 +242,9 @@ app.delete(
   async function (request, response) {
     const params = request.params;
 
-    const id = params.id;
+    const id = parseInt(params.id);
 
-    await prisma.task.delete({ where: { uuid: id } });
+    await prisma.task.delete({ where: { id: id } });
 
     return response.status(204).send();
   }
@@ -350,30 +257,22 @@ app.patch(
   },
   async function (request, response) {
     const params = request.params;
-    const id = params.id;
+    const id = parseInt(params.id);
 
     const task = await prisma.task.findUnique({
-      where: { uuid: id },
+      where: { id: id },
     });
 
     const isCompleted = task.completed;
 
     const updatedTask = await prisma.task.update({
-      where: { uuid: id },
+      where: { id: id },
       data: {
         completed: !isCompleted,
       },
-      include: {
-        board: true,
-      },
     });
 
-    response.status(202).send({
-      name: updatedTask.name,
-      completed: updatedTask.completed,
-      id: updatedTask.uuid,
-      board_id: updatedTask.board.uuid,
-    });
+    response.status(202).send(updatedTask);
   }
 );
 
@@ -397,6 +296,11 @@ app.get(
             user: true,
           },
         },
+        Task: {
+          include: {
+            _count: true,
+          },
+        },
       },
       orderBy: {
         id: "asc",
@@ -404,6 +308,10 @@ app.get(
     });
 
     const transformedPayload = boards.map((board) => {
+      const completedTasks = board.Task.map((task) => {
+        return task.completed;
+      });
+
       const users = board.BoardUser.map((boardUser) => {
         return {
           id: boardUser.user.uuid,
@@ -416,132 +324,12 @@ app.get(
         id: board.uuid,
         name: board.name,
         users,
+        completedTasks: completedTasks.filter(Boolean).length,
+        totalTasks: board.Task.length,
       };
     });
 
     response.send(transformedPayload);
-  }
-);
-
-app.post(
-  "/boards/:board_id/users/:user_id",
-  {
-    preHandler: authenticateToken,
-  },
-  async function (request, response) {
-    const boardId = request.params.board_id;
-    const userId = request.params.user_id;
-
-    const user = await prisma.user.findUnique({
-      where: {
-        uuid: userId,
-      },
-    });
-
-    const board = await prisma.board.findUnique({
-      where: {
-        uuid: boardId,
-      },
-    });
-
-    const newBoardUser = await prisma.boardUser.create({
-      data: {
-        user_id: user.id,
-        board_id: board.id,
-      },
-    });
-
-    response.status(201).send({
-      id: newBoardUser.uuid,
-    });
-  }
-);
-
-app.delete(
-  "/boards/:id",
-  {
-    preHandler: authenticateToken,
-  },
-  async function (request, response) {
-    const id = request.params.id;
-
-    await prisma.board.delete({
-      where: {
-        uuid: id,
-      },
-    });
-
-    response.status(204).send();
-  }
-);
-
-app.patch(
-  "/boards/:id",
-  {
-    preHandler: authenticateToken,
-  },
-  async function (request, response) {
-    const params = request.params;
-    const id = params.id;
-    const body = request.body;
-
-    const updatedBoard = await prisma.board.update({
-      where: { uuid: id },
-      data: {
-        name: body.name,
-      },
-    });
-
-    response.status(202).send({
-      name: updatedBoard.name,
-      id: updatedBoard.uuid,
-    });
-  }
-);
-
-app.post(
-  "/boards/:board_id/tasks/:task_id",
-  {
-    preHandler: authenticateToken,
-  },
-  async function (request, response) {
-    const boardId = request.params.board_id;
-    const taskId = request.params.task_id;
-
-    const board = await prisma.board.findUnique({
-      where: {
-        uuid: boardId,
-      },
-    });
-
-    const boardUser = await prisma.boardUser.findFirst({
-      where: {
-        user_id: request.user.id,
-        board_id: board.id,
-      },
-    });
-
-    if (!boardUser)
-      return response.status(400).send({
-        message: "Method not allowed for this user",
-      });
-
-    const task = await prisma.task.findUnique({
-      where: {
-        uuid: taskId,
-      },
-    });
-
-    const newBoardTask = await prisma.boardTask.create({
-      data: {
-        task_id: task.id,
-        board_id: board.id,
-      },
-    });
-
-    response.status(201).send({
-      id: newBoardTask.uuid,
-    });
   }
 );
 

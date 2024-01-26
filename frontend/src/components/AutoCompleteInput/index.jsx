@@ -32,6 +32,7 @@ const AutocompleteInput = (props) => {
       <Input
         onChange={(e) => handleInputChange(e.target.value)}
         value={inputValue}
+        placeholder={props.placeholder}
       />
       {suggestedOptions.length > 0 && (
         <ul className="auto-complete-input__options">

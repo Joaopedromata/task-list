@@ -6,6 +6,8 @@ import minus from "../../assets/minus.svg";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
+import trash from "../../assets/trash.svg";
+import edit from "../../assets/edit.svg";
 import { useAuth } from "../../hooks/useAuth";
 import api from "../../services/api";
 import AutocompleteInput from "../../components/AutoCompleteInput";
@@ -175,6 +177,10 @@ function Boards() {
       .catch((error) => console.log(error));
   }
 
+  const getPorcentage = (total, part) => {
+    return (part / total) * 100;
+  };
+
   return (
     <>
       <Header title="Quadros" />
@@ -187,14 +193,14 @@ function Boards() {
           />
           <Button>Novo Quadro</Button>
         </form>
-        <ul className="board-list">
+        <li className="board-list">
           {boards.map((board) => (
             <Fragment key={board.id}>
-              <li className="board-list__items">
-                <div className="board-info">
+              <div className="goal-card">
+                <div className="goal-card__header">
                   {editInputValue.isOpen && editInputValue.id === board.id ? (
                     <input
-                      className="board-info__input"
+                      className="goal-card__title--input"
                       value={editInputValue.value}
                       autoFocus
                       onChange={(e) =>
@@ -206,76 +212,96 @@ function Boards() {
                       onBlur={() => handleEdit(board.id)}
                     />
                   ) : (
-                    <span onClick={() => navigate(`/boards/${board.id}/tasks`)}>
-                      {board.name}
-                    </span>
-                  )}
-                  <div className="board-users">
-                    {board.users.map((user) => (
-                      <a key={user.id} title={user.name}>
-                        {getInitialCharacterFromName(user.name)}
-                      </a>
-                    ))}
-                    <a
-                      onClick={() =>
-                        setUserManager({
-                          isOpen: !userManager.isOpen,
-                          id: board.id,
-                        })
-                      }
+                    <h6
+                      className="goal-card__title"
+                      onClick={() => navigate(`/boards/${board.id}/tasks`)}
                     >
+                      {board.name}
+                    </h6>
+                  )}
+                  <div className="goal-card__header___icons">
+                    <div>
                       <img
-                        src={
-                          userManager.isOpen && board.id === userManager.id
-                            ? minus
-                            : plus
+                        src={edit}
+                        onClick={() =>
+                          setEditInputValue({
+                            id: board.id,
+                            isOpen: !editInputValue.isOpen,
+                            value: board.name,
+                          })
                         }
                       />
-                    </a>
-                  </div>
-                  <div className="board-info__buttons">
-                    <Button
-                      variant={
-                        editInputValue.isOpen && editInputValue.id === board.id
-                          ? ""
-                          : "secondary"
-                      }
-                      onClick={() =>
-                        setEditInputValue({
-                          id: board.id,
-                          isOpen: !editInputValue.isOpen,
-                          value: board.name,
-                        })
-                      }
-                    >
-                      Editar
-                    </Button>
-                    <Button
-                      variant="error"
-                      onClick={() => deleteBoard(board.id)}
-                    >
-                      Excluir
-                    </Button>
+                    </div>
+                    <div>
+                      <img src={trash} onClick={() => deleteBoard(board.id)} />
+                    </div>
                   </div>
                 </div>
-              </li>
+                <div className="goal-card__users">
+                  {board.users.map((user) => (
+                    <a
+                      key={user.id}
+                      title={user.name}
+                      className="goal-card__name-acronym"
+                    >
+                      {getInitialCharacterFromName(user.name)}
+                    </a>
+                  ))}
+                  <a
+                    onClick={() =>
+                      setUserManager({
+                        isOpen: !userManager.isOpen,
+                        id: board.id,
+                      })
+                    }
+                  >
+                    <img
+                      src={
+                        userManager.isOpen && board.id === userManager.id
+                          ? minus
+                          : plus
+                      }
+                    />
+                  </a>
+                </div>
+                <div className="goal-card__progress-bar___wrapper">
+                  <div className="goal-card__progress-bar___title____wrapper">
+                    <p className="goal-card__progress-bar___title">Progresso</p>
+                    <span className="goal-card__progress-bar___progress">
+                      {board.completedTasks}/{board.totalTasks}
+                    </span>
+                  </div>
+                  <div className="goal-card__progress-bar__background">
+                    <div
+                      className="goal-card__progress-bar"
+                      style={{
+                        width: `${getPorcentage(
+                          board.totalTasks,
+                          board.completedTasks
+                        )}%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
               {userManager.isOpen && userManager.id === board.id && (
-                <li className="board-list__items">
+                <div className="goal-card__new-user">
                   <form
                     className="form board"
                     onSubmit={(e) => handleAddUser(e, board.id)}
                   >
                     <AutocompleteInput
+                      placeholder="Novo usuário"
                       onChange={(_, id) => setNewUserInputValue(id)}
                       getAutocompleteOptions={getAutocompleteOptions}
                     />
                     <Button>Adicionar</Button>
                   </form>
-                </li>
+                </div>
               )}
             </Fragment>
           ))}
-        </ul>
+        </li>
       </div>
     </>
   );

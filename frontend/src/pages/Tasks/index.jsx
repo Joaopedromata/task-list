@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import moreVertical from "../../assets/more-vertical.svg";
 import chevronDown from "../../assets/chevron-down.svg";
 import chevronUp from "../../assets/chevron-up.svg";
+import check from "../../assets/check.svg";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -181,9 +182,8 @@ function Tasks() {
 
   return (
     <>
-      <Header title="Tarefas" />
+      <Header title="Tarefas" backTo="/boards" />
       <div className="container">
-        <Button onClick={() => navigate("/boards")}>Voltar</Button>
         <form className="form" onSubmit={(event) => addTask(event)}>
           <Input
             placeholder="Nova Tarefa"
@@ -216,12 +216,17 @@ function Tasks() {
         <ul className="task-list">
           {tasks.map((task) => (
             <li key={task.id} className="task-list__item">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => completeTask(task.id)}
-              />
-              <span className="task-list__item___name">{task.name}</span>
+              <label className="container-checkbox">
+                <div className="checkbox-label">{task.name}</div>
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => completeTask(task.id)}
+                />
+                <span className="checkmark">
+                  <img src={check} className="checkmark__icon" />
+                </span>
+              </label>
               <img
                 className="task-list__item___more"
                 src={moreVertical}

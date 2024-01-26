@@ -1,9 +1,15 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: "Inter", sans-serif;
+  box-sizing: border-box;
 }
 
 li {
   list-style: none;
+}
+
+body {
+  background: #09090a;
+  color: #ffffff;
 }

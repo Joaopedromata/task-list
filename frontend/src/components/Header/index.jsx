@@ -1,5 +1,7 @@
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
+import logout from "../../assets/log-out.svg";
+import arrowLeft from "../../assets/arrow-left.svg";
 
 function Header(props) {
   const navigate = useNavigate();
@@ -11,10 +13,17 @@ function Header(props) {
 
   return (
     <header className="header">
+      {props.backTo ? (
+        <img
+          src={arrowLeft}
+          onClick={() => navigate(props.backTo)}
+          className="header-icon"
+        />
+      ) : (
+        <div />
+      )}
       <h1 className="header-title">{props.title}</h1>
-      <h3 className="header-logout" onClick={handleLogout}>
-        logout
-      </h3>
+      <img src={logout} onClick={handleLogout} className="header-icon" />
     </header>
   );
 }

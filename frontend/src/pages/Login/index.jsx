@@ -68,7 +68,7 @@ function Login() {
         <Link className="create-user" to="/create-user">
           Criar conta
         </Link>
-        <Button>{isLoading ? "Aguarde..." : "Entrar"}</Button>
+        <Button disabled={isLoading}>{isLoading ? "Aguarde..." : "Entrar"}</Button>
       </form>
     </div>
   );

@@ -1,4 +1,13 @@
 .input {
-  padding: 5px;
   flex-grow: 1;
+  border-radius: 12px;
+  height: 40px;
+  padding: 0 12px;
+  border: none;
+  background: #27272a;
+  color: #ffffff;
+}
+
+.input:focus {
+  outline: none;
 }

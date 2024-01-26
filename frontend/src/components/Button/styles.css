@@ -1,15 +1,17 @@
 .button {
-  background: #28a745;
-  color: #fff;
+  background: #22c55e;
   border: none;
+  height: 40px;
   padding: 0px 10px;
-  height: 30px;
-  transition: all 300ms;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #ffffff;
   cursor: pointer;
+  transition: all 300ms;
 }
 
 .button:hover {
-  background: #218838;
+  background: #15803d;
 }
 
 .button-secondary {

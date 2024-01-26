@@ -22,25 +22,6 @@
   font-size: 12px;
 }
 
-.form-container input {
-  flex-grow: 1;
-  padding: 5px;
-}
-
-.form-container button {
-  background: #28a745;
-  color: #fff;
-  border: none;
-  padding: 8px 10px;
-  cursor: pointer;
-  transition: all 300ms;
-  margin-top: 16px;
-}
-
-.form-container button:hover {
-  background: #218838;
-}
-
 .error-message {
   color: red;
 }
