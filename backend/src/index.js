@@ -260,9 +260,9 @@ app.delete(
   async function (request, response) {
     const params = request.params;
 
-    const id = parseInt(params.id);
+    const id = params.id;
 
-    await prisma.task.delete({ where: { id: id } });
+    await prisma.task.delete({ where: { uuid: id } });
 
     return response.status(204).send();
   }
@@ -348,6 +348,22 @@ app.get(
     });
 
     response.send(transformedPayload);
+  }
+);
+
+app.delete(
+  "/boards/:id",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const params = request.params;
+
+    const id = params.id;
+
+    await prisma.board.delete({ where: { uuid: id } });
+
+    return response.status(204).send();
   }
 );
 
