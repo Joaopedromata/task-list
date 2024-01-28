@@ -26,7 +26,6 @@ const authenticateToken = (request, response, next) => {
       });
     }
 
-    // Você pode adicionar o objeto 'user' ao request para uso posterior
     request.user = user;
 
     next();
@@ -150,10 +149,16 @@ app.get(
   async function (request, response) {
     const id = request.params.id;
 
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: id,
+      },
+    });
+
     const tasks = await prisma.task.findMany({
       where: {
         completed: false,
-        board_id: parseInt(id),
+        board_id: parseInt(board.id),
       },
       orderBy: {
         id: "asc",
@@ -171,10 +176,17 @@ app.get(
   },
   async function (request, response) {
     const id = request.params.id;
+
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: id,
+      },
+    });
+
     const tasks = await prisma.task.findMany({
       where: {
         completed: true,
-        board_id: parseInt(id),
+        board_id: parseInt(board.id),
       },
       orderBy: {
         id: "asc",
@@ -196,10 +208,16 @@ app.post(
     const name = body.name;
     const board_id = body.board_id;
 
+    const board = await prisma.board.findUnique({
+      where: {
+        uuid: board_id,
+      },
+    });
+
     const newTask = await prisma.task.create({
       data: {
         name: name,
-        board_id: parseInt(board_id),
+        board_id: parseInt(board.id),
       },
     });
 
