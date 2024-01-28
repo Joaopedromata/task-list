@@ -367,6 +367,24 @@ app.delete(
   }
 );
 
+app.patch(
+  "/boards/:id",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const params = request.params;
+    const id = params.id;
+
+    const board = await prisma.board.update({
+      where: { uuid: id },
+      data: request.body,
+    });
+
+    response.status(202).send(board);
+  }
+);
+
 app
   .listen({ port: 3333 })
   .then(() => console.log("HTTP server is running"))
