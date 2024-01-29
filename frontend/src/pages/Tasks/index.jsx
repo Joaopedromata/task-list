@@ -263,7 +263,7 @@ function Tasks() {
                     ))}
                   <li
                     className="task-list__floating-menu___item"
-                    onClick={() => deleteTask(task.id)}
+                    onClick={() => deleteTask(task.uuid)}
                   >
                     <span>Excluir tarefa</span>
                   </li>
