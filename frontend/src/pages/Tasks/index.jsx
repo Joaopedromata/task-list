@@ -111,7 +111,7 @@ function Tasks() {
     api
       .delete("/tasks/" + id)
       .then(() => {
-        const filteredTasks = tasks.filter((task) => task.id !== id);
+        const filteredTasks = tasks.filter((task) => task.uuid !== id);
         setTasks(filteredTasks);
       })
       .catch((error) => console.log(error));
@@ -179,6 +179,8 @@ function Tasks() {
       })
       .catch((error) => console.log(error));
   }
+
+  console.log("2", { tasks });
 
   return (
     <>
