@@ -11,8 +11,10 @@ import edit from "../../assets/edit.svg";
 import { useAuth } from "../../hooks/useAuth";
 import api from "../../services/api";
 import AutocompleteInput from "../../components/AutoCompleteInput";
+import { toast } from "react-toastify";
 
 function Boards() {
+  const toastLoading = () => toast.loading("Carregando...");
   const navigate = useNavigate();
   const token = useAuth();
 
@@ -32,12 +34,16 @@ function Boards() {
   useEffect(() => {
     if (!token) return;
 
+    toastLoading();
     api
       .get("/boards")
       .then((response) => {
+        toast.dismiss();
         setBoards(response.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   }, [token]);
 
   function handleSubmit(e) {
@@ -47,6 +53,7 @@ function Boards() {
       return;
     }
 
+    toastLoading();
     api
       .post("/boards", { name: inputValue })
       .then(() => {
@@ -57,6 +64,7 @@ function Boards() {
             },
           })
           .then((response) => {
+            toast.dismiss();
             setBoards(response.data);
           })
           .catch((error) => console.log(error));
@@ -137,6 +145,7 @@ function Boards() {
   }
 
   function deleteBoard(id) {
+    toastLoading();
     api
       .delete("/boards/" + id)
       .then(() => {
@@ -147,6 +156,7 @@ function Boards() {
             },
           })
           .then((response) => {
+            toast.dismiss();
             setBoards(response.data);
           })
           .catch((error) => console.log(error));
@@ -178,7 +188,7 @@ function Boards() {
   }
 
   const getPorcentage = (total, part) => {
-    return (part / total) * 100;
+    return (part / total) * 100 || 0;
   };
 
   return (
@@ -268,6 +278,13 @@ function Boards() {
                   <div className="goal-card__progress-bar___title____wrapper">
                     <p className="goal-card__progress-bar___title">Progresso</p>
                     <span className="goal-card__progress-bar___progress">
+                      <small>
+                        {getPorcentage(
+                          board.totalTasks,
+                          board.completedTasks
+                        ).toFixed(0)}
+                        %
+                      </small>
                       {board.completedTasks}/{board.totalTasks}
                     </span>
                   </div>

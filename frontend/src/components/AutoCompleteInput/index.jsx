@@ -34,7 +34,7 @@ const AutocompleteInput = (props) => {
         value={inputValue}
         placeholder={props.placeholder}
       />
-      {suggestedOptions.length > 0 && (
+      {suggestedOptions?.length > 0 && (
         <ul className="auto-complete-input__options">
           {suggestedOptions.map(({ item, value }) => (
             <li
