@@ -12,6 +12,10 @@ import check from "../../assets/check.svg";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
+  const [board, setBoard] = useState({
+    uuid: "",
+    name: "",
+  });
   const [inputValue, setInputValue] = useState("");
   const [filter, setFilter] = useState("all");
   const { id } = useParams();
@@ -45,7 +49,8 @@ function Tasks() {
       api
         .get("/boards/" + id + "/tasks")
         .then((response) => {
-          setTasks(response.data);
+          setTasks(response.data.tasks);
+          setBoard({ uuid: response.data.uuid, name: response.data.name });
         })
         .catch((error) => console.log(error));
       return;
@@ -55,7 +60,7 @@ function Tasks() {
         .get("/boards/" + id + "/tasks/pending")
         .then(
           (response) => {
-            setTasks(response.data);
+            setTasks(response.data.tasks);
           },
           {
             headers: {
@@ -71,7 +76,7 @@ function Tasks() {
       api
         .get("/boards/" + id + "/tasks/completed")
         .then((response) => {
-          setTasks(response.data);
+          setTasks(response.data.tasks);
         })
         .catch((error) => console.log(error));
       return;
@@ -91,7 +96,7 @@ function Tasks() {
         api
           .get("/boards/" + id + "/tasks")
           .then((response) => {
-            setTasks(response.data);
+            setTasks(response.data.tasks);
           })
           .catch((error) => console.log(error));
         return;
@@ -124,7 +129,7 @@ function Tasks() {
         api
           .get("/boards/" + id + "/tasks")
           .then((response) => {
-            setTasks(response.data);
+            setTasks(response.data.tasks);
             setFloatingMenu({
               id: "",
               isOpen: false,
@@ -180,11 +185,9 @@ function Tasks() {
       .catch((error) => console.log(error));
   }
 
-  console.log("2", { tasks });
-
   return (
     <>
-      <Header title="Tarefas" backTo="/boards" />
+      <Header title={board.name} backTo="/boards" />
       <div className="container">
         <form className="form" onSubmit={(event) => addTask(event)}>
           <Input

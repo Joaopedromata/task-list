@@ -114,27 +114,32 @@ app.get(
     try {
       const id = request.params.id;
 
-      const board = await prisma.board.findUnique({
+      const boardWithTasks = await prisma.board.findUnique({
         where: {
           uuid: id,
         },
-      });
-
-      const tasks = await prisma.task.findMany({
-        where: {
-          board_id: parseInt(board.id),
+        include: {
+          Task: {
+            orderBy: [
+              {
+                completed: "asc",
+              },
+              {
+                id: "asc",
+              },
+            ],
+          },
         },
-        orderBy: [
-          {
-            completed: "asc",
-          },
-          {
-            id: "asc",
-          },
-        ],
       });
 
-      response.send(tasks);
+      const presenter = {
+        id: boardWithTasks.id,
+        name: boardWithTasks.name,
+        uuid: boardWithTasks.uuid,
+        tasks: boardWithTasks.Task,
+      };
+
+      response.send(presenter);
     } catch (error) {
       console.log({ error });
     }
@@ -149,23 +154,35 @@ app.get(
   async function (request, response) {
     const id = request.params.id;
 
-    const board = await prisma.board.findUnique({
+    const boardWithTasks = await prisma.board.findUnique({
       where: {
         uuid: id,
       },
+      include: {
+        Task: {
+          where: {
+            completed: false,
+          },
+          orderBy: [
+            {
+              completed: "asc",
+            },
+            {
+              id: "asc",
+            },
+          ],
+        },
+      },
     });
 
-    const tasks = await prisma.task.findMany({
-      where: {
-        completed: false,
-        board_id: parseInt(board.id),
-      },
-      orderBy: {
-        id: "asc",
-      },
-    });
+    const presenter = {
+      id: boardWithTasks.id,
+      name: boardWithTasks.name,
+      uuid: boardWithTasks.uuid,
+      tasks: boardWithTasks.Task,
+    };
 
-    response.send(tasks);
+    response.send(presenter);
   }
 );
 
@@ -177,23 +194,35 @@ app.get(
   async function (request, response) {
     const id = request.params.id;
 
-    const board = await prisma.board.findUnique({
+    const boardWithTasks = await prisma.board.findUnique({
       where: {
         uuid: id,
       },
+      include: {
+        Task: {
+          where: {
+            completed: true,
+          },
+          orderBy: [
+            {
+              completed: "asc",
+            },
+            {
+              id: "asc",
+            },
+          ],
+        },
+      },
     });
 
-    const tasks = await prisma.task.findMany({
-      where: {
-        completed: true,
-        board_id: parseInt(board.id),
-      },
-      orderBy: {
-        id: "asc",
-      },
-    });
+    const presenter = {
+      id: boardWithTasks.id,
+      name: boardWithTasks.name,
+      uuid: boardWithTasks.uuid,
+      tasks: boardWithTasks.Task,
+    };
 
-    response.send(tasks);
+    response.send(presenter);
   }
 );
 
