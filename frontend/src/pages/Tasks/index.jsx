@@ -221,8 +221,8 @@ function Tasks() {
         <ul className="task-list">
           {tasks.map((task) => (
             <li key={task.id} className="task-list__item">
+              <div className="checkbox-label">{task.name}</div>
               <label className="container-checkbox">
-                <div className="checkbox-label">{task.name}</div>
                 <input
                   type="checkbox"
                   checked={task.completed}
