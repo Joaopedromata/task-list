@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import "./styles.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import plus from "../../assets/plus.svg";
 import minus from "../../assets/minus.svg";
 import Input from "../../components/Input";
@@ -222,12 +222,12 @@ function Boards() {
                       onBlur={() => handleEdit(board.id)}
                     />
                   ) : (
-                    <h6
+                    <Link
                       className="goal-card__title"
-                      onClick={() => navigate(`/boards/${board.id}/tasks`)}
+                      to={`/boards/${board.id}/tasks`}
                     >
                       {board.name}
-                    </h6>
+                    </Link>
                   )}
                   <div className="goal-card__header___icons">
                     <div>

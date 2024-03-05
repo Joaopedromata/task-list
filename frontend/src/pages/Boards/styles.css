@@ -108,6 +108,7 @@
   color: #ffffff;
   font-weight: 500;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .goal-card__title--input {
