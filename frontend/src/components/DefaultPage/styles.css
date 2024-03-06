@@ -1,0 +1,25 @@
+.page-container {
+  display: flex;
+  background: #18181b;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  flex: 1;
+  border-radius: 32px 0 0 0;
+  background: #09090a;
+}
+
+@media (max-width: 900px) {
+  .page-container {
+    flex-direction: column;
+  }
+
+  .page-wrapper {
+    border-radius: 0;
+  }
+}

@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import "./styles.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import plus from "../../assets/plus.svg";
 import minus from "../../assets/minus.svg";
 import Input from "../../components/Input";
@@ -12,10 +12,11 @@ import { useAuth } from "../../hooks/useAuth";
 import api from "../../services/api";
 import AutocompleteInput from "../../components/AutoCompleteInput";
 import { toast } from "react-toastify";
+import SideBar from "../../components/SideBar";
+import DefaultPage from "../../components/DefaultPage";
 
 function Boards() {
   const toastLoading = () => toast.loading("Carregando...");
-  const navigate = useNavigate();
   const token = useAuth();
 
   const [newUserInputValue, setNewUserInputValue] = useState("");
@@ -192,8 +193,7 @@ function Boards() {
   };
 
   return (
-    <>
-      <Header title="Quadros" />
+    <DefaultPage title="Quadros">
       <div className="container">
         <form className="form" onSubmit={(event) => handleSubmit(event)}>
           <Input
@@ -320,7 +320,7 @@ function Boards() {
           ))}
         </li>
       </div>
-    </>
+    </DefaultPage>
   );
 }
 

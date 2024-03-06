@@ -9,6 +9,7 @@ import moreVertical from "../../assets/more-vertical.svg";
 import chevronDown from "../../assets/chevron-down.svg";
 import chevronUp from "../../assets/chevron-up.svg";
 import check from "../../assets/check.svg";
+import DefaultPage from "../../components/DefaultPage";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -186,8 +187,7 @@ function Tasks() {
   }
 
   return (
-    <>
-      <Header title={board.name} backTo="/boards" />
+    <DefaultPage title={board.name} backTo="/boards">
       <div className="container">
         <form className="form" onSubmit={(event) => addTask(event)}>
           <Input
@@ -289,7 +289,7 @@ function Tasks() {
           ))}
         </ul>
       </div>
-    </>
+    </DefaultPage>
   );
 }
 
