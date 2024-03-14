@@ -1,5 +1,6 @@
 .header {
   padding: 40px;
+  position: relative;
 
   display: flex;
   align-items: center;
@@ -22,4 +23,62 @@
 
 .header-icon:hover {
   transform: scale(1.1);
+}
+
+.menu {
+  display: none;
+}
+
+.header-menu {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .header-menu {
+    top: 0;
+    left: 0;
+    display: flex;
+    background: #27272a;
+    width: 100%;
+    position: fixed;
+    z-index: 100;
+
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header-menu-list-item {
+    cursor: pointer;
+    text-decoration: none;
+    color: #a1a1aa;
+    border-bottom: 1px solid #a1a1aa;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .header {
+    padding: 20px 20px 0 20px;
+    justify-content: flex-start;
+    gap: 24px;
+    margin-bottom: 0;
+  }
+
+  .header-title {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 400;
+  }
+
+  .menu {
+    display: block;
+  }
+
+  .back {
+    display: none;
+  }
+
+  .fake-div {
+    display: none;
+  }
 }
