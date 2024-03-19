@@ -1,0 +1,23 @@
+.create-habit-container {
+  margin: 0 auto;
+  padding: 20px;
+  width: 400px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.create-habit-container input {
+  margin-bottom: 24px;
+}
+
+.create-habit-label {
+  margin-bottom: 16px;
+}
+
+.create-habit-week-days {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}

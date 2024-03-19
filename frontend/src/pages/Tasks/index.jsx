@@ -10,6 +10,7 @@ import chevronDown from "../../assets/chevron-down.svg";
 import chevronUp from "../../assets/chevron-up.svg";
 import check from "../../assets/check.svg";
 import DefaultPage from "../../components/DefaultPage";
+import Checkbox from "../../components/Checkbox";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -221,17 +222,11 @@ function Tasks() {
         <ul className="task-list">
           {tasks.map((task) => (
             <li key={task.id} className="task-list__item">
-              <div className="checkbox-label">{task.name}</div>
-              <label className="container-checkbox">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => completeTask(task.id)}
-                />
-                <span className="checkmark">
-                  <img src={check} className="checkmark__icon" />
-                </span>
-              </label>
+              <Checkbox
+                label={task.name}
+                checked={task.completed}
+                onChange={() => completeTask(task.id)}
+              />
               <img
                 className="task-list__item___more"
                 src={moreVertical}

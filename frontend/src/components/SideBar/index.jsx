@@ -4,6 +4,7 @@ import money from "../../assets/money.svg";
 import logo from "../../assets/logo.svg";
 import { Link, useNavigate } from "react-router-dom";
 import logout from "../../assets/log-out.svg";
+import activity from "../../assets/activity.svg";
 
 const SideBar = () => {
   const navigate = useNavigate();
@@ -24,6 +25,10 @@ const SideBar = () => {
         <Link className="side-bar-list-item">
           <img src={money} />
           Financeiro
+        </Link>
+        <Link className="side-bar-list-item" to="/habits">
+          <img src={activity} />
+          Hábitos
         </Link>
       </div>
       <hr className="side-bar-separator" />

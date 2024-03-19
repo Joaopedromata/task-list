@@ -3,6 +3,8 @@ import Login from "./pages/Login";
 import Tasks from "./pages/Tasks";
 import CreateUser from "./pages/CreateUser";
 import Boards from "./pages/Boards";
+import Habits from "./pages/Habits";
+import CreateHabit from "./pages/CreateHabit";
 
 function Router() {
   return (
@@ -12,6 +14,8 @@ function Router() {
         <Route path="boards/:id/tasks" element={<Tasks />} />
         <Route path="create-user" element={<CreateUser />} />
         <Route path="boards" element={<Boards />} />
+        <Route path="habits" element={<Habits />} />
+        <Route path="create-habit" element={<CreateHabit />} />
         <Route path="*" element={<Navigate to="boards" />} />
       </Routes>
     </BrowserRouter>

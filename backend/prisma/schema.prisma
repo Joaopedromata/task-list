@@ -11,11 +11,14 @@ datasource db {
 }
 
 model Task {
-  id        Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
   name      String
   completed Boolean @default(false)
   board_id  Int
-  uuid      String  @unique @default(uuid())
 
   board     Board       @relation(fields: [board_id], references: [id], onDelete: Cascade)
   BoardTask BoardTask[]
@@ -24,21 +27,27 @@ model Task {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  name     String
-  password String
-  uuid     String @unique @default(uuid())
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  email      String   @unique
+  name       String
+  password   String
 
   BoardUser BoardUser[]
+  Financing Financing[]
 
   @@map("users")
 }
 
 model Board {
-  id   Int    @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
   name String
-  uuid String @unique @default(uuid())
 
   BoardUser BoardUser[]
   Task      Task[]
@@ -48,8 +57,10 @@ model Board {
 }
 
 model BoardUser {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
   board_id Int
   user_id  Int
@@ -62,8 +73,10 @@ model BoardUser {
 }
 
 model BoardTask {
-  id   Int    @id @default(autoincrement())
-  uuid String @unique @default(uuid())
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
   board_id Int
   task_id  Int
@@ -73,4 +86,67 @@ model BoardTask {
 
   @@unique([task_id, board_id])
   @@map("boards_tasks")
+}
+
+model Financing {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  user_id              Int
+  description          String
+  amount               Float
+  installments         Int
+  due_date_first       DateTime
+  installment_amount   Float
+  FinancingInstallment FinancingInstallment[]
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("financings")
+}
+
+model FinancingInstallment {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  amount       Float
+  paid_at      DateTime?
+  paid_amount  Float?
+  financing_id Int
+  due_date     DateTime
+
+  financing Financing @relation(fields: [financing_id], references: [id], onDelete: Cascade)
+
+  @@map("financing_installments")
+}
+
+model Habit {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  title    String
+  weekDays HabitWeekDays[]
+
+  @@map("habits")
+}
+
+model HabitWeekDays {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  habit_id Int
+  week_day Int
+
+  habit Habit @relation(fields: [habit_id], references: [id])
+
+  @@unique([habit_id, week_day])
+  @@map("habit_week_days")
 }

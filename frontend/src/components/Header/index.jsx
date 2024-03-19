@@ -22,6 +22,9 @@ function Header(props) {
             Quadros
           </Link>
           <Link className="header-menu-list-item">Financeiro</Link>
+          <Link className="header-menu-list-item" to="/habits">
+            Hábitos
+          </Link>
           <div className="header-menu-list-item" onClick={handleLogout}>
             Sair
           </div>

@@ -414,6 +414,79 @@ app.patch(
   }
 );
 
+app.post(
+  "/financings",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const {
+      description,
+      amount,
+      installments,
+      due_date_first,
+      installment_amount,
+    } = request.body;
+
+    const formatDueDateFirst = new Date(due_date_first);
+    const financing = await prisma.financing.create({
+      data: {
+        user_id: request.user.id,
+        description,
+        amount,
+        installments,
+        installment_amount,
+        due_date_first: formatDueDateFirst,
+      },
+    });
+
+    const financingInstallment = Array.from(Array(installments).keys()).map(
+      () => {
+        const newData = new Date(
+          formatDueDateFirst.setMonth(formatDueDateFirst.getMonth() + 1)
+        );
+
+        return {
+          financing_id: financing.id,
+          due_date: newData,
+          amount: installment_amount,
+        };
+      }
+    );
+
+    await prisma.financingInstallment.createMany({
+      data: financingInstallment,
+    });
+
+    response.status(201).send(financing);
+  }
+);
+
+app.post(
+  "/habits",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const { title, week_days } = request.body;
+
+    const habits = await prisma.habit.create({
+      data: {
+        title,
+        weekDays: {
+          create: week_days.map((weekDay) => {
+            return {
+              week_day: weekDay,
+            };
+          }),
+        },
+      },
+    });
+
+    response.status(201).send(habits);
+  }
+);
+
 app
   .listen({ port: 3333 })
   .then(() => console.log("HTTP server is running"))

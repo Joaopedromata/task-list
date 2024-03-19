@@ -1,0 +1,51 @@
+.habits-container {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.habits-header {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 36px;
+}
+
+.habits-week-days {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-auto-flow: row;
+  gap: 16px;
+}
+
+.habits-week-day {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  color: rgb(161 161 170);
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.habits-days-wrapper {
+  display: flex;
+  gap: 16px;
+}
+
+.habits-days {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-auto-flow: column;
+  gap: 16px;
+}
+
+.habits-day {
+  height: 40px;
+  width: 40px;
+  border: 2px solid rgb(39 39 42);
+  border-radius: 8px;
+  background: rgb(24 24 27);
+}
+
+.off {
+  opacity: 0.4;
+}
