@@ -5,6 +5,7 @@ import Checkbox from "../../components/Checkbox";
 import Button from "../../components/Button";
 import { useState } from "react";
 import api from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const availableWeekDays = [
   "Domingo",
@@ -19,6 +20,7 @@ const availableWeekDays = [
 const CreateHabit = () => {
   const [title, setTitle] = useState("");
   const [weekDays, setWeekDays] = useState([]);
+  const navigate = useNavigate();
 
   const handleCreateHabit = async (event) => {
     event.preventDefault();
@@ -36,6 +38,8 @@ const CreateHabit = () => {
     setWeekDays([]);
 
     alert("Hábito criado com sucesso");
+
+    navigate("/habits");
   };
 
   const handleToggleWeekDay = (weekDay) => {
@@ -49,7 +53,7 @@ const CreateHabit = () => {
   };
 
   return (
-    <DefaultPage title="Novo Hábito">
+    <DefaultPage title="Novo Hábito" backTo="/habits">
       <form className="create-habit-container" onSubmit={handleCreateHabit}>
         <div className="create-habit-label">Qual seu comprometimento?</div>
         <Input
