@@ -24,10 +24,10 @@ const HabitDay = () => {
   }, [dayId]);
 
   const dayOfWeek = habitsInfo?.date
-    ? dayjs(habitsInfo.date).format("dddd")
+    ? dayjs(habitsInfo.date).add(3, "hours").format("dddd")
     : "";
   const dayMonthYear = habitsInfo?.date
-    ? dayjs(habitsInfo.date).format("DD/MM/YYYY")
+    ? dayjs(habitsInfo.date).add(3, "hours").format("DD/MM/YYYY")
     : "";
 
   const toggleHabit = async (habitId, dayId) => {

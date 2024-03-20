@@ -14,7 +14,10 @@ const Habits = () => {
 
   const minimumSummaryDatesSize = 18 * 7;
   const summaryDates = generateDatesFromYearBegging();
-  const amountOfDaysToFill = minimumSummaryDatesSize - summaryDates.length;
+  const amountOfDaysToFill =
+    minimumSummaryDatesSize -
+    summaryDates.length -
+    dayjs(summaryDates[0]).add(3, "hours").day();
 
   useEffect(() => {
     api
@@ -75,6 +78,12 @@ const Habits = () => {
             ))}
           </div>
           <div className="habits-days">
+            {dayjs(summaryDates[0]).add(3, "hours").day() !== 0 &&
+              Array.from({
+                length: dayjs(summaryDates[0]).add(3, "hours").day(),
+              }).map((_, index) => (
+                <div className="habits-day off" key={index}></div>
+              ))}
             {summaryDates.map((date, index) => {
               const dayInSummary = summary.find((day) => {
                 return dayjs(date).isSame(day.date, "day");
