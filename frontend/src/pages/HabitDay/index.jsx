@@ -1,32 +1,89 @@
 import "./styles.css";
 import DefaultPage from "../../components/DefaultPage";
 import Checkbox from "../../components/Checkbox";
+import { useEffect, useState } from "react";
+import api from "../../services/api";
+import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 const HabitDay = () => {
+  const { dayId } = useParams();
+  const [habitsInfo, setHabitsInfo] = useState();
+
   const getPorcentage = (total, part) => {
     return (part / total) * 100 || 0;
+  };
+
+  useEffect(() => {
+    if (dayId) {
+      api
+        .get(`day/${dayId}`)
+        .then((response) => setHabitsInfo(response.data))
+        .catch((error) => console.log({ error }));
+    }
+  }, [dayId]);
+
+  const dayOfWeek = habitsInfo?.date
+    ? dayjs(habitsInfo.date).format("dddd")
+    : "";
+  const dayMonthYear = habitsInfo?.date
+    ? dayjs(habitsInfo.date).format("DD/MM/YYYY")
+    : "";
+
+  const toggleHabit = async (habitId, dayId) => {
+    const isHabitAlreadyCompleted =
+      habitsInfo?.completed_habits?.includes(habitId);
+
+    await api.patch(`habits/${habitId}/day/${dayId}/toggle`);
+
+    let completedHabits = [];
+
+    if (isHabitAlreadyCompleted) {
+      completedHabits = habitsInfo?.completed_habits.filter(
+        (id) => id !== habitId
+      );
+
+      setHabitsInfo({
+        ...habitsInfo,
+        completed_habits: completedHabits,
+      });
+    } else {
+      completedHabits = [...habitsInfo?.completed_habits, habitId];
+    }
+
+    setHabitsInfo({
+      ...habitsInfo,
+      completed_habits: completedHabits,
+    });
   };
 
   return (
     <DefaultPage title="Hábito" backTo="/habits">
       <div className="habit-day-container">
-        <h6 className="habit-day-week-day">segunda-feira</h6>
-        <h2 className="habit-day-day">01/01/2024</h2>
+        <h6 className="habit-day-week-day">{dayOfWeek}</h6>
+        <h2 className="habit-day-day">{dayMonthYear}</h2>
         <div className="habit-day__progress-bar__background">
           <div
             className="habit-day__progress-bar"
             style={{
-              width: `${getPorcentage(100, 70)}%`,
+              width: `${getPorcentage(
+                habitsInfo?.possible_habits?.length,
+                habitsInfo?.completed_habits?.length
+              )}%`,
             }}
           ></div>
         </div>
         <div className="habit-day__items">
-          <Checkbox label="Beber 2L de água" />
-          <Checkbox label="Beber 2L de água" />
-          <Checkbox label="Beber 2L de água" />
-          <Checkbox label="Beber 2L de água" />
-          <Checkbox label="Beber 2L de água" />
-          <Checkbox label="Beber 2L de água" />
+          {habitsInfo?.possible_habits.map((habit) => (
+            <Checkbox
+              label={habit.title}
+              key={habit.uuid}
+              checked={habitsInfo?.completed_habits.find(
+                (completed_habit) => completed_habit === habit.id
+              )}
+              onChange={() => toggleHabit(habit.id, habitsInfo.day_id)}
+            />
+          ))}
         </div>
       </div>
     </DefaultPage>

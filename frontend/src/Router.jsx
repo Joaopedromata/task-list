@@ -17,7 +17,7 @@ function Router() {
         <Route path="boards" element={<Boards />} />
         <Route path="habits" element={<Habits />} />
         <Route path="create-habit" element={<CreateHabit />} />
-        <Route path="habits/:day_id" element={<HabitDay />} />
+        <Route path="habits/:dayId" element={<HabitDay />} />
         <Route path="*" element={<Navigate to="boards" />} />
       </Routes>
     </BrowserRouter>

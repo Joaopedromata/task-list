@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import fastify from "fastify";
 import { PrismaClient } from "@prisma/client";
 import cors from "@fastify/cors";
@@ -516,6 +517,88 @@ app.get(
     `;
 
     response.status(200).send(summary);
+  }
+);
+
+app.get(
+  "/day/:id",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const { id } = request.params;
+
+    const day = await prisma.day.findUnique({
+      where: {
+        uuid: id,
+      },
+      include: {
+        dayHabits: true,
+      },
+    });
+
+    const parsedDate = dayjs(day.date).startOf("day");
+    const weekDay = parsedDate.get("day");
+
+    const possibleHabits = await prisma.habit.findMany({
+      where: {
+        created_at: {
+          lte: parsedDate.toDate(),
+        },
+        weekDays: {
+          some: {
+            week_day: weekDay,
+          },
+        },
+      },
+    });
+
+    const completedHabits = day?.dayHabits.map((dayHabit) => {
+      return dayHabit.habit_id;
+    });
+
+    response.status(200).send({
+      day_id: day.id,
+      date: parsedDate,
+      possible_habits: possibleHabits,
+      completed_habits: completedHabits,
+    });
+  }
+);
+
+app.patch(
+  "/habits/:habit_id/day/:day_id/toggle",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const { habit_id, day_id } = request.params;
+
+    const dayHabit = await prisma.dayHabit.findUnique({
+      where: {
+        day_id_habit_id: {
+          day_id: parseInt(day_id),
+          habit_id: parseInt(habit_id),
+        },
+      },
+    });
+
+    if (dayHabit) {
+      await prisma.dayHabit.delete({
+        where: {
+          id: dayHabit.id,
+        },
+      });
+    } else {
+      await prisma.dayHabit.create({
+        data: {
+          day_id: parseInt(day_id),
+          habit_id: parseInt(habit_id),
+        },
+      });
+    }
+
+    response.status(204).send();
   }
 );
 
