@@ -30,31 +30,34 @@ const HabitDay = () => {
     ? dayjs(habitsInfo.date).add(3, "hours").format("DD/MM/YYYY")
     : "";
 
-  const toggleHabit = async (habitId, dayId) => {
+  const toggleHabit = (habitId, dayId) => {
     const isHabitAlreadyCompleted =
       habitsInfo?.completed_habits?.includes(habitId);
 
-    await api.patch(`habits/${habitId}/day/${dayId}/toggle`);
+    api
+      .patch(`habits/${habitId}/day/${dayId}/toggle`, {})
+      .then(() => {
+        let completedHabits = [];
 
-    let completedHabits = [];
+        if (isHabitAlreadyCompleted) {
+          completedHabits = habitsInfo?.completed_habits.filter(
+            (id) => id !== habitId
+          );
 
-    if (isHabitAlreadyCompleted) {
-      completedHabits = habitsInfo?.completed_habits.filter(
-        (id) => id !== habitId
-      );
+          setHabitsInfo({
+            ...habitsInfo,
+            completed_habits: completedHabits,
+          });
+        } else {
+          completedHabits = [...habitsInfo?.completed_habits, habitId];
+        }
 
-      setHabitsInfo({
-        ...habitsInfo,
-        completed_habits: completedHabits,
-      });
-    } else {
-      completedHabits = [...habitsInfo?.completed_habits, habitId];
-    }
-
-    setHabitsInfo({
-      ...habitsInfo,
-      completed_habits: completedHabits,
-    });
+        setHabitsInfo({
+          ...habitsInfo,
+          completed_habits: completedHabits,
+        });
+      })
+      .catch((error) => console.log({ error }));
   };
 
   return (
