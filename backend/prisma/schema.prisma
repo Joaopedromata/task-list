@@ -132,6 +132,7 @@ model Habit {
 
   title    String
   weekDays HabitWeekDays[]
+  DayHabit DayHabit[]
 
   @@map("habits")
 }
@@ -149,4 +150,34 @@ model HabitWeekDays {
 
   @@unique([habit_id, week_day])
   @@map("habit_week_days")
+}
+
+model Day {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  date DateTime
+
+  dayHabits DayHabit[]
+
+  @@unique([date])
+  @@map("days")
+}
+
+model DayHabit {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  day_id   Int
+  habit_id Int
+
+  day   Day   @relation(fields: [day_id], references: [id])
+  habit Habit @relation(fields: [habit_id], references: [id])
+
+  @@unique([day_id, habit_id])
+  @@map("day_habits")
 }

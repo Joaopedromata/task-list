@@ -5,6 +5,7 @@ import CreateUser from "./pages/CreateUser";
 import Boards from "./pages/Boards";
 import Habits from "./pages/Habits";
 import CreateHabit from "./pages/CreateHabit";
+import HabitDay from "./pages/HabitDay";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
         <Route path="boards" element={<Boards />} />
         <Route path="habits" element={<Habits />} />
         <Route path="create-habit" element={<CreateHabit />} />
+        <Route path="habits/:day_id" element={<HabitDay />} />
         <Route path="*" element={<Navigate to="boards" />} />
       </Routes>
     </BrowserRouter>

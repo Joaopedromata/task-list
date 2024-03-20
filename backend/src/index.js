@@ -487,6 +487,38 @@ app.post(
   }
 );
 
+app.get(
+  "/summary",
+  {
+    preHandler: authenticateToken,
+  },
+  async function (request, response) {
+    const summary = await prisma.$queryRaw`
+      SELECT D.id, D.date, D.uuid,
+      (
+        SELECT
+          cast(count(*) as float)
+        FROM day_habits DH
+        WHERE DH.day_id = D.id
+      ) as completed,
+      (
+        SELECT
+          cast(count(*) as float)
+        FROM habit_week_days HWD
+        JOIN habits H
+          ON H.id = HWD.habit_id
+        WHERE
+          HWD.week_day = EXTRACT(DOW FROM D.date)
+          AND H.created_at <= D.date
+      ) as amount
+      FROM days D
+
+    `;
+
+    response.status(200).send(summary);
+  }
+);
+
 app
   .listen({ port: 3333 })
   .then(() => console.log("HTTP server is running"))

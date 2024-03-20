@@ -1,0 +1,41 @@
+.habit-day-container {
+  margin: 0 auto;
+  padding: 20px;
+  width: 400px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.habit-day-week-day {
+  color: rgb(161 161 170);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.habit-day-day {
+  font-weight: 800;
+  font-size: 32px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.habit-day__progress-bar__background,
+.habit-day__progress-bar {
+  background: rgb(63 63 70);
+  width: 100%;
+  height: 12px;
+  border-radius: 12px;
+}
+
+.habit-day__progress-bar {
+  background: rgb(124 58 237);
+  width: 75%;
+}
+
+.habit-day__items {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+  gap: 16px;
+}

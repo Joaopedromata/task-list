@@ -44,8 +44,10 @@
   border: 2px solid rgb(39 39 42);
   border-radius: 8px;
   background: rgb(24 24 27);
+  cursor: pointer;
 }
 
 .off {
   opacity: 0.4;
+  cursor: not-allowed;
 }
